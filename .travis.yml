@@ -1,0 +1,24 @@
+language: node_js
+node_js: '10'
+cache:
+  directories:
+    - ~/.npm
+env:
+  global:
+    - FORCE_COLOR=1
+jobs:
+  include:
+    - stage: test
+      script:
+        - npm run prettier
+        - npm run tslint
+        - npm run build
+        - npm test
+        - npm run cover
+        - nyc report --reporter json
+        - 'bash <(curl -s https://codecov.io/bash)'
+stages:
+  - test
+branches:
+  only:
+    - master

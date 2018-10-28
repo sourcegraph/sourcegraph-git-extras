@@ -1,0 +1,125 @@
+{
+  "name": "git-extras",
+  "publisher": "sourcegraph",
+  "title": "Git extras",
+  "description": "A Sourcegraph extension that adds useful features when viewing files in a Git repository on Sourcegraph, GitHub, GitLab, and other supported code hosts.",
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "actions": [
+      {
+        "id": "git.blame.toggle",
+        "command": "updateConfiguration",
+        "commandArguments": [
+          [
+            "git.blame.lineDecorations"
+          ],
+          "${!config.git.blame.lineDecorations}",
+          null,
+          "json"
+        ],
+        "category": "Git",
+        "title": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} blame",
+        "actionItem": {
+          "label": "Blame",
+          "description": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} Git blame line annotations"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "action": "git.blame.toggle",
+          "when": "resource"
+        }
+      ],
+      "commandPalette": [
+        {
+          "action": "git.blame.toggle",
+          "when": "resource"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Git extras",
+      "properties": {
+        "git.blame.lineDecorations": {
+          "description": "Whether to show Git blame annotations at the end of each line.",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  },
+  "version": "0.0.0-DEVELOPMENT",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sourcegraph/sourcegraph-git-extras.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/sourcegraph-git-extras.js",
+  "scripts": {
+    "prettier": "prettier '**/{*.{js?(on),ts?(x),scss},.*.js?(on)}' --write --list-different",
+    "tslint": "tslint -c tslint.json -p tsconfig.json './src/*.ts?(x)' './*.ts?(x)'",
+    "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require source-map-support/register --opts mocha.opts",
+    "cover": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc --require ts-node/register --require source-map-support/register --all mocha --opts mocha.opts --timeout 10000",
+    "build": "parcel build --no-minify --out-file sourcegraph-git-extras.js src/extension.ts",
+    "serve": "parcel serve --no-hmr --out-file sourcegraph-git-extras.js src/extension.ts",
+    "sourcegraph:prepublish": "yarn run build"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts?(x)"
+    ],
+    "exclude": [
+      "**/*.test.ts?(x)"
+    ],
+    "extension": [
+      ".tsx",
+      ".ts"
+    ]
+  },
+  "browserslist": [
+    "last 1 Chrome versions",
+    "last 1 Firefox versions",
+    "last 1 Edge versions",
+    "last 1 Safari versions"
+  ],
+  "devDependencies": {
+    "@commitlint/cli": "^7.0.0",
+    "@commitlint/config-conventional": "^7.0.1",
+    "@sourcegraph/prettierrc": "^2.2.0",
+    "@sourcegraph/tsconfig": "^3.0.0",
+    "@sourcegraph/tslint-config": "^12.0.0",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.7.1",
+    "husky": "^1.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "parcel-bundler": "^1.9.7",
+    "prettier": "^1.14.2",
+    "source-map-support": "^0.5.9",
+    "sourcegraph": "^18.3.0",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "date-fns": "^2.0.0-alpha.24",
+    "rxjs": "^6.3.2"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
+    }
+  }
+}
