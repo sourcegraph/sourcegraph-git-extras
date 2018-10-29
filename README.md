@@ -11,3 +11,7 @@ A [Sourcegraph extension](https://github.com/sourcegraph/sourcegraph-extension-a
 [**🗃️ Source code**](https://github.com/sourcegraph/sourcegraph-git-extras)
 
 [**➕ Add to Sourcegraph**](https://sourcegraph.com/extensions/sourcegraph/git-extras)
+
+![screenshot from 2018-10-28 17-55-20](https://user-images.githubusercontent.com/1976/47624533-f3a1e800-dada-11e8-81d9-3d4bd67fc08a.png)
+![screenshot from 2018-10-28 17-55-02](https://user-images.githubusercontent.com/1976/47624534-f3a1e800-dada-11e8-9c08-9ce307653b20.png)
+
