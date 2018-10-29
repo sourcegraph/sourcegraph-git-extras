@@ -34,7 +34,11 @@ export async function getBlameDecorations(
                         }
                     )}: • ${truncate(hunk.message, 45)}`,
                     hoverMessage: `View commit ${truncate(hunk.rev, 7, '')}: ${truncate(hunk.message, 1000)}`,
-                    linkURL: hunk.commit.url,
+                    linkURL: `${
+                        sourcegraph.internal.clientApplication === 'sourcegraph'
+                            ? ''
+                            : sourcegraph.internal.sourcegraphURL
+                    }${hunk.commit.url}`,
                 },
             } as sourcegraph.TextDocumentDecoration)
     )
