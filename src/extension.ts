@@ -20,7 +20,7 @@ export function activate(): void {
         }
         const settings = sourcegraph.configuration.get<Settings>().value
         try {
-            editor.setDecorations(null, await getBlameDecorations(editor.document.uri, settings))
+            editor.setDecorations(null, await getBlameDecorations({ uri: editor.document.uri, settings }))
         } catch (err) {
             console.error('Decoration error:', err)
         }
