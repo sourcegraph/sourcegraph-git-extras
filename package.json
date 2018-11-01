@@ -31,7 +31,7 @@
       "editor/title": [
         {
           "action": "git.blame.toggle",
-          "when": "resource"
+          "when": "resource && clientApplication.isSourcegraph"
         }
       ],
       "commandPalette": [
