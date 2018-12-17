@@ -5610,13 +5610,10 @@ source-map@^0.5.0, source-map@^0.5.3, source-map@^0.5.6:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
 
-sourcegraph@^18.4.0:
-  version "18.4.0"
-  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-18.4.0.tgz#53b8d181c9a45075c5f6e870a3d29d7a239ca39d"
-  integrity sha512-l7sAmHE2I4UaMqZ2SC+YjJ2kqGT4ZdCr29lBbH3KaNANGl+hvI3qpe4UAhBGkjUUANWcBeeL9cDHRvAuf4Ovmg==
-  dependencies:
-    minimatch "^3.0.4"
-    rxjs "^6.3.2"
+sourcegraph@^20.0.0:
+  version "20.0.0"
+  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-20.0.0.tgz#7828fa7f8383a3631e7d4f12a6c8468ba6ba2dd3"
+  integrity sha512-9wCLAIwbMIiG0KfftvRjvsHuCyRsOIk9/Kun1ULusVLnuM6Y/6VC2vrcx3Gk3YHudAwcd5xEA1LYraiNGmbuvQ==
 
 spawn-wrap@^1.4.2:
   version "1.4.2"
