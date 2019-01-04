@@ -10,6 +10,12 @@ export function activate(): void {
         return sourcegraph.app.activeWindow ? sourcegraph.app.activeWindow.visibleViewComponents[0] : undefined
     }
 
+    // BACKCOMPAT: Older versions of Sourcegraph accept `null` and do not have
+    // `sourcegraph.app.createDecorationType`.
+    const fileBlameDecorationType = sourcegraph.app.createDecorationType
+        ? sourcegraph.app.createDecorationType()
+        : ((null as any) as sourcegraph.TextDocumentDecorationType)
+
     // When the configuration or current file changes, publish new decorations.
     //
     // TODO: Unpublish decorations on previously (but not currently) open files when settings changes, to avoid a
@@ -20,7 +26,10 @@ export function activate(): void {
         }
         const settings = sourcegraph.configuration.get<Settings>().value
         try {
-            editor.setDecorations(null, await getBlameDecorations({ uri: editor.document.uri, settings }))
+            editor.setDecorations(
+                fileBlameDecorationType,
+                await getBlameDecorations({ uri: editor.document.uri, settings })
+            )
         } catch (err) {
             console.error('Decoration error:', err)
         }
