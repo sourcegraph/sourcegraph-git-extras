@@ -6,7 +6,8 @@
 
 A [Sourcegraph extension](https://docs.sourcegraph.com/extensions) that adds useful features when viewing files in a Git repository on [Sourcegraph](https://sourcegraph.com), GitHub, GitLab, and other [supported code hosts](https://docs.sourcegraph.com/extensions):
 
-- **Git: Show/hide blame** (or **Blame** in editor title): toggles Git blame annotations with each line's last commit, author, date, etc.
+- **Git: Show/hide current line blame**: toggles Git blame annotations on the currently selected line. Shown by default.
+- **Git: Show/hide file blame** (or **Blame** in editor title): toggles Git blame annotations with each line's last commit, author, date, etc. Hidden by default.
 
 [**🗃️ Source code**](https://github.com/sourcegraph/sourcegraph-git-extras)
 
