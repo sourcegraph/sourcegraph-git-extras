@@ -68,7 +68,8 @@
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require source-map-support/register --opts mocha.opts",
     "cover": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc --require ts-node/register --require source-map-support/register --all mocha --opts mocha.opts --timeout 10000",
     "build": "parcel build --no-minify --out-file sourcegraph-git-extras.js src/extension.ts",
-    "serve": "parcel serve --no-hmr --out-file sourcegraph-git-extras.js src/extension.ts",
+    "symlink-package": "[ ! -f dist/package.json ] && (mkdir -p dist && pushd dist && ln -s ../package.json package.json && popd) || echo \"dist/package.json already symlinked\"",
+    "serve": "npm run symlink-package && parcel serve --no-hmr --out-file sourcegraph-git-extras.js src/extension.ts",
     "sourcegraph:prepublish": "yarn run build"
   },
   "commitlint": {
@@ -100,6 +101,7 @@
     "@sourcegraph/prettierrc": "^2.2.0",
     "@sourcegraph/tsconfig": "^3.0.0",
     "@sourcegraph/tslint-config": "^12.3.1",
+    "@types/lodash": "^4.14.119",
     "@types/mocha": "5.2.5",
     "@types/node": "10.12.18",
     "husky": "^1.1.2",
@@ -115,6 +117,7 @@
   },
   "dependencies": {
     "date-fns": "^2.0.0-alpha.24",
+    "lodash": "^4.17.11",
     "rxjs": "^6.3.2"
   },
   "husky": {
