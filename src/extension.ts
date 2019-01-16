@@ -5,6 +5,8 @@ export interface Settings {
     ['git.blame.lineDecorations']?: boolean
 }
 
+const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
+
 export function activate(): void {
     function activeEditor(): sourcegraph.CodeEditor | undefined {
         return sourcegraph.app.activeWindow ? sourcegraph.app.activeWindow.visibleViewComponents[0] : undefined
@@ -20,7 +22,7 @@ export function activate(): void {
         }
         const settings = sourcegraph.configuration.get<Settings>().value
         try {
-            editor.setDecorations(null, await getBlameDecorations({ uri: editor.document.uri, settings }))
+            editor.setDecorations(decorationType, await getBlameDecorations({ uri: editor.document.uri, settings }))
         } catch (err) {
             console.error('Decoration error:', err)
         }
