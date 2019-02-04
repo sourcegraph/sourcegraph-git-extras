@@ -4,46 +4,48 @@ import { Settings } from './extension'
 import { resolveURI } from './uri'
 import { memoizeAsync } from './util/memoizeAsync'
 
-export const getBlameDecorations = memoizeAsync(
-    async ({ uri, settings }: { uri: string; settings: Settings }): Promise<sourcegraph.TextDocumentDecoration[]> => {
-        if (!settings['git.blame.lineDecorations']) {
-            return []
-        }
-        const hunks = await queryBlameHunks(uri)
-        const now = Date.now()
-        return hunks.map(
-            hunk =>
-                ({
-                    range: new sourcegraph.Range(hunk.startLine - 1, 0, hunk.startLine - 1, 0),
-                    isWholeLine: true,
-                    after: {
-                        light: {
-                            color: 'rgba(0, 0, 25, 0.55)',
-                            backgroundColor: 'rgba(193, 217, 255, 0.65)',
-                        },
-                        dark: {
-                            color: 'rgba(235, 235, 255, 0.55)',
-                            backgroundColor: 'rgba(15, 43, 89, 0.65)',
-                        },
-                        contentText: `${truncate(hunk.author.person.displayName, 25)}, ${formatDistanceStrict(
-                            hunk.author.date,
-                            now,
-                            {
-                                addSuffix: true,
-                            }
-                        )}: • ${truncate(hunk.message, 45)}`,
-                        hoverMessage: `${truncate(hunk.message, 1000)}`,
-                        linkURL: `${
-                            sourcegraph.internal.clientApplication === 'sourcegraph'
-                                ? ''
-                                : sourcegraph.internal.sourcegraphURL
-                        }${hunk.commit.url}`,
-                    },
-                } as sourcegraph.TextDocumentDecoration)
-        )
-    },
-    params => JSON.stringify(params)
-)
+export const getBlameDecorations = async ({ uri, settings, selections }: { uri: string; settings: Settings, selections: sourcegraph.Selection[] }): Promise<sourcegraph.TextDocumentDecoration[]> => {
+    if (!settings['git.blame.lineDecorations']) {
+        return []
+    }
+    const primarySelection = selections[0]
+    if (!primarySelection) {
+        return []
+    }
+    const hunks = await queryBlameHunks(uri)
+    const now = Date.now()
+    return hunks
+    .filter(h => primarySelection.start.line !== h.endLine && primarySelection.start.line >= h.startLine && primarySelection.end.line <= h.endLine)
+    .map(
+        hunk => ({
+            range: new sourcegraph.Range(primarySelection.start.line, 0, primarySelection.end.line, 0),
+            isWholeLine: true,
+            after: {
+                light: {
+                    color: 'rgba(0, 0, 25, 0.55)',
+                    backgroundColor: 'rgba(193, 217, 255, 0.65)',
+                },
+                dark: {
+                    color: 'rgba(235, 235, 255, 0.55)',
+                    backgroundColor: 'rgba(15, 43, 89, 0.65)',
+                },
+                contentText: `${truncate(hunk.author.person.displayName, 25)}, ${formatDistanceStrict(
+                    hunk.author.date,
+                    now,
+                    {
+                        addSuffix: true,
+                    }
+                )}: • ${truncate(hunk.message, 45)}`,
+                hoverMessage: `${truncate(hunk.message, 1000)}`,
+                linkURL: `${
+                    sourcegraph.internal.clientApplication === 'sourcegraph'
+                        ? ''
+                        : sourcegraph.internal.sourcegraphURL
+                }${hunk.commit.url}`,
+            },
+        })
+    )
+}
 
 interface Hunk {
     startLine: number
@@ -61,7 +63,7 @@ interface Hunk {
     }
 }
 
-async function queryBlameHunks(uri: string): Promise<Hunk[]> {
+const queryBlameHunks = memoizeAsync(async (uri: string): Promise<Hunk[]> => {
     const { repo, rev, path } = resolveURI(uri)
     const { data, errors } = await sourcegraph.commands.executeCommand(
         'queryGraphQL',
@@ -99,7 +101,7 @@ query GitBlame($repo: String!, $rev: String!, $path: String!) {
         throw new Error('no blame data is available (repository, commit, or path not found)')
     }
     return data.repository.commit.blob.blame
-}
+}, uri => uri)
 
 function truncate(s: string, max: number, omission = '…'): string {
     if (s.length <= max) {
