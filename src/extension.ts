@@ -9,7 +9,7 @@ export interface Settings {
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
 
-export function activate(): void {
+export function activate(context: sourcegraph.ExtensionContext): void {
 
     const selectionChanges = from(sourcegraph.app.activeWindowChanged).pipe(
         filter((window): window is sourcegraph.Window => window !== undefined),
@@ -20,14 +20,19 @@ export function activate(): void {
         )),
     )
 
+    // TODO(lguychard) sourcegraph.configuration is currently not rxjs-compatible.
+    // Fix this once it has been made compatible.
     const configurationChanges = new BehaviorSubject<void>(undefined)
-    sourcegraph.configuration.subscribe(() => configurationChanges.next())
-
-    combineLatest(configurationChanges, selectionChanges)
-        .subscribe(([, {editor, selections}]) => decorate(editor, selections))
+    context.subscriptions.add(
+        sourcegraph.configuration.subscribe(() => configurationChanges.next())
+    )
 
     // When the configuration or current file changes, publish new decorations.
-    //
+    context.subscriptions.add(
+        combineLatest(configurationChanges, selectionChanges)
+            .subscribe(([, {editor, selections}]) => decorate(editor, selections))
+    )
+
     // TODO: Unpublish decorations on previously (but not currently) open files when settings changes, to avoid a
     // brief flicker of the old state when the file is reopened.
     async function decorate(editor: sourcegraph.CodeEditor, selections: sourcegraph.Selection[]): Promise<void> {
