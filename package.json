@@ -102,7 +102,7 @@
     "@sourcegraph/tsconfig": "^3.0.0",
     "@sourcegraph/tslint-config": "^12.3.1",
     "@types/mocha": "5.2.5",
-    "@types/node": "10.12.18",
+    "@types/node": "10.12.24",
     "husky": "^1.1.2",
     "lnfs-cli": "^2.1.0",
     "mkdirp": "^0.5.1",
