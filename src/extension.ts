@@ -11,11 +11,11 @@ const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.c
 
 export function activate(context: sourcegraph.ExtensionContext): void {
 
-    const selectionChanges = from(sourcegraph.app.activeWindowChanged).pipe(
+    const selectionChanges = from(sourcegraph.app.activeWindowChanges).pipe(
         filter((window): window is sourcegraph.Window => window !== undefined),
-        switchMap(window => window.activeViewComponentChanged),
+        switchMap(window => window.activeViewComponentChanges),
         filter((editor): editor is sourcegraph.CodeEditor => editor !== undefined),
-        switchMap(editor => from(editor.selectionsChanged).pipe(
+        switchMap(editor => from(editor.selectionsChanges).pipe(
             map(selections => ({ editor, selections }))
         )),
     )
