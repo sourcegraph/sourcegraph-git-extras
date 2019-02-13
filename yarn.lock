@@ -5664,10 +5664,10 @@ rxjs-tslint-rules@^4.12.0:
     tslib "^1.8.0"
     tsutils "^3.0.0"
 
-rxjs@^6.3.2:
-  version "6.3.3"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.3.3.tgz#3c6a7fa420e844a81390fb1158a9ec614f4bad55"
-  integrity sha512-JTWmoY9tWCs7zvIk/CvRjhjGaOd+OVBM987mxFo+OW66cGpdKjZcpmc74ES1sB//7Kl/PAe8+wEakuhG4pcgOw==
+rxjs@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.4.0.tgz#f3bb0fe7bda7fb69deac0c16f17b50b0b8790504"
+  integrity sha512-Z9Yfa11F6B9Sg/BK9MnqnQ+aQYicPLtilXBp2yUtDt2JRCE0h26d33EnfO3ZxoNxG0T92OUucP3Ct7cpfkdFfw==
   dependencies:
     tslib "^1.9.0"
 
@@ -5900,10 +5900,10 @@ source-map@^0.5.0, source-map@^0.5.3, source-map@^0.5.6:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
 
-sourcegraph@^20.1.0:
-  version "20.1.0"
-  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-20.1.0.tgz#9ba6c0e57107b1fe66c4299db32c7780094398cc"
-  integrity sha512-zbpDsFtExHQ04eJvQ2IIoi1rWrJU7Uhw4wXoy7V9Xpj/qMgbNnV4dev1kDg24y6F9vXM+jSONRrVcg/EO/UMag==
+sourcegraph@^20.2.0:
+  version "20.2.0"
+  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-20.2.0.tgz#36a99639a5ce32271db340b4df0e4ccb2e4cc20d"
+  integrity sha512-KG3tQ9PNEza5JW2cihalfMBtgMwjtXKaQpO6blE5fLxvD4odrfkCDhb5pW5Ptym2DX/jorbDev1elDc/FYMImw==
 
 spawn-wrap@^1.4.2:
   version "1.4.2"
