@@ -10,7 +10,7 @@ jobs:
   include:
     - stage: test
       script:
-        - npm run prettier
+        - npm run prettier-check
         - npm run tslint
         - npm run build
         - npm test

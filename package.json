@@ -63,7 +63,8 @@
   ],
   "main": "dist/sourcegraph-git-extras.js",
   "scripts": {
-    "prettier": "prettier '**/{*.{js?(on),ts?(x),scss},.*.js?(on)}' --write --list-different",
+    "prettier-check": "npm run prettier -- --write=false",
+    "prettier": "prettier '**/*.{js?(on),ts?(x),scss,yml,md}' --write --list-different",
     "tslint": "tslint -c tslint.json -p tsconfig.json './src/*.ts?(x)' './*.ts?(x)'",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require source-map-support/register --opts mocha.opts",
     "cover": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc --require ts-node/register --require source-map-support/register --all mocha --opts mocha.opts --timeout 10000",
