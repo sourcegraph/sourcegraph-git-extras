@@ -33,14 +33,12 @@ export function activate(context: sourcegraph.ExtensionContext): void {
         // When configuration changes or onDidOpenTextDocument fires, add decorations for all blame hunks.
         const activeEditor = () => sourcegraph.app.activeWindow && sourcegraph.app.activeWindow.activeViewComponent
         context.subscriptions.add(
-            combineLatest(configurationChanges, from(sourcegraph.workspace.onDidOpenTextDocument)).subscribe(
-                async () => {
-                    const editor = activeEditor()
-                    if (editor) {
-                        await decorate(editor, null)
-                    }
+            combineLatest(configurationChanges, from(sourcegraph.workspace.openedTextDocuments)).subscribe(async () => {
+                const editor = activeEditor()
+                if (editor) {
+                    await decorate(editor, null)
                 }
-            )
+            })
         )
     }
 

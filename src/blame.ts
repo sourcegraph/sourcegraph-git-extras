@@ -1,5 +1,6 @@
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import * as sourcegraph from 'sourcegraph'
+import gql from 'tagged-template-noop'
 import { Settings } from './extension'
 import { resolveURI } from './uri'
 import { memoizeAsync } from './util/memoizeAsync'
@@ -54,6 +55,49 @@ const getBlameDecorationsForSelections = (hunks: Hunk[], selections: sourcegraph
 const getAllBlameDecorations = (hunks: Hunk[], now: number) =>
     hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1))
 
+const queryBlameHunks = memoizeAsync(
+    async (uri: string): Promise<Hunk[]> => {
+        const { repo, rev, path } = resolveURI(uri)
+        const { data, errors } = await sourcegraph.commands.executeCommand(
+            'queryGraphQL',
+            gql`
+                query GitBlame($repo: String!, $rev: String!, $path: String!) {
+                    repository(name: $repo) {
+                        commit(rev: $rev) {
+                            blob(path: $path) {
+                                blame(startLine: 0, endLine: 0) {
+                                    startLine
+                                    endLine
+                                    author {
+                                        person {
+                                            displayName
+                                        }
+                                        date
+                                    }
+                                    message
+                                    rev
+                                    commit {
+                                        url
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            `,
+            { repo, rev, path }
+        )
+        if (errors && errors.length > 0) {
+            throw new Error(errors.join('\n'))
+        }
+        if (!data || !data.repository || !data.repository.commit || !data.repository.commit.blob) {
+            throw new Error('no blame data is available (repository, commit, or path not found)')
+        }
+        return data.repository.commit.blob.blame
+    },
+    uri => uri
+)
+
 /**
  * Queries the blame hunks for the document at the provided URI,
  * and returns blame decorations for all provided selections,
@@ -96,49 +140,6 @@ interface Hunk {
         url: string
     }
 }
-
-const queryBlameHunks = memoizeAsync(
-    async (uri: string): Promise<Hunk[]> => {
-        const { repo, rev, path } = resolveURI(uri)
-        const { data, errors } = await sourcegraph.commands.executeCommand(
-            'queryGraphQL',
-            `
-query GitBlame($repo: String!, $rev: String!, $path: String!) {
-	repository(name: $repo) {
-		commit(rev: $rev) {
-			blob(path: $path) {
-				blame(startLine: 0, endLine: 0) {
-					startLine
-					endLine
-					author {
-						person {
-							displayName
-						}
-						date
-					}
-					message
-					rev
-					commit {
-						url
-					}
-				}
-			}
-		}
-	}
-}
-	`,
-            { repo, rev, path }
-        )
-        if (errors && errors.length > 0) {
-            throw new Error(errors.join('\n'))
-        }
-        if (!data || !data.repository || !data.repository.commit || !data.repository.commit.blob) {
-            throw new Error('no blame data is available (repository, commit, or path not found)')
-        }
-        return data.repository.commit.blob.blame
-    },
-    uri => uri
-)
 
 function truncate(s: string, max: number, omission = '…'): string {
     if (s.length <= max) {

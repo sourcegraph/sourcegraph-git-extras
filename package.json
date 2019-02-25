@@ -119,7 +119,8 @@
   },
   "dependencies": {
     "date-fns": "^2.0.0-alpha.24",
-    "rxjs": "^6.4.0"
+    "rxjs": "^6.4.0",
+    "tagged-template-noop": "^2.1.0"
   },
   "husky": {
     "hooks": {
