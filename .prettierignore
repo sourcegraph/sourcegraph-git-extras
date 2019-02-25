@@ -2,3 +2,5 @@ package.json
 package-lock.json
 dist/
 .cache/
+coverage/
+.nyc_output/

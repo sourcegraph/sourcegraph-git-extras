@@ -13,7 +13,7 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     // TODO(lguychard) sourcegraph.configuration is currently not rxjs-compatible.
     // Fix this once it has been made compatible.
     const configurationChanges = new BehaviorSubject<void>(undefined)
-    context.subscriptions.add(sourcegraph.configuration.subscribe(() => configurationChanges.next()))
+    context.subscriptions.add(sourcegraph.configuration.subscribe(() => configurationChanges.next(undefined)))
 
     if (sourcegraph.app.activeWindowChanges) {
         const selectionChanges = from(sourcegraph.app.activeWindowChanges).pipe(
