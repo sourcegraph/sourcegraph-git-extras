@@ -20,9 +20,12 @@ const getDecorationFromHunk = (hunk: Hunk, now: number, decoratedLine: number): 
             addSuffix: true,
         })}: • ${truncate(hunk.message, 45)}`,
         hoverMessage: `${truncate(hunk.message, 1000)}`,
-        linkURL: `${
-            sourcegraph.internal.clientApplication === 'sourcegraph' ? '' : sourcegraph.internal.sourcegraphURL
-        }${hunk.commit.url}`,
+        linkURL: new URL(
+            hunk.commit.url,
+            sourcegraph.internal.clientApplication === 'sourcegraph'
+                ? undefined
+                : sourcegraph.internal.sourcegraphURL.toString()
+        ).href,
     },
 })
 
