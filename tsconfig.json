@@ -9,6 +9,7 @@
     "inlineSourceMap": true,
     "declaration": false,
     "outDir": "dist",
+    "noEmit": true,
     "rootDir": "src",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
