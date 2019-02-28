@@ -5,7 +5,12 @@ import { Settings } from './extension'
 import { resolveURI } from './uri'
 import { memoizeAsync } from './util/memoizeAsync'
 
-export const getDecorationFromHunk = (hunk: Hunk, now: number, decoratedLine: number, sourcegraph: typeof import('sourcegraph')): TextDocumentDecoration => ({
+export const getDecorationFromHunk = (
+    hunk: Hunk,
+    now: number,
+    decoratedLine: number,
+    sourcegraph: typeof import('sourcegraph')
+): TextDocumentDecoration => ({
     range: new sourcegraph.Range(decoratedLine, 0, decoratedLine, 0),
     isWholeLine: true,
     after: {
@@ -25,7 +30,12 @@ export const getDecorationFromHunk = (hunk: Hunk, now: number, decoratedLine: nu
     },
 })
 
-export const getBlameDecorationsForSelections = (hunks: Hunk[], selections: Selection[], now: number, sourcegraph: typeof import('sourcegraph')) => {
+export const getBlameDecorationsForSelections = (
+    hunks: Hunk[],
+    selections: Selection[],
+    now: number,
+    sourcegraph: typeof import('sourcegraph')
+) => {
     const decorations: TextDocumentDecoration[] = []
     for (const hunk of hunks) {
         // Hunk start and end lines are 1-indexed, but selection lines are zero-indexed
@@ -51,7 +61,7 @@ export const getAllBlameDecorations = (hunks: Hunk[], now: number, sourcegraph: 
     hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, sourcegraph))
 
 const queryBlameHunks = memoizeAsync(
-    async ({uri, sourcegraph}: {uri: string, sourcegraph: typeof import('sourcegraph')}): Promise<Hunk[]> => {
+    async ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }): Promise<Hunk[]> => {
         const { repo, rev, path } = resolveURI(uri)
         const { data, errors } = await sourcegraph.commands.executeCommand(
             'queryGraphQL',
@@ -105,13 +115,13 @@ export const getBlameDecorations = async ({
     selections,
     now,
     queryHunks = queryBlameHunks,
-    sourcegraph
+    sourcegraph,
 }: {
     uri: string
     settings: Settings
-    selections: Selection[] | null,
-    now: number,
-    queryHunks?: ({ uri, sourcegraph } : { uri: string, sourcegraph: typeof import('sourcegraph') }) => Promise<Hunk[]>,
+    selections: Selection[] | null
+    now: number
+    queryHunks?: ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }) => Promise<Hunk[]>
     sourcegraph: typeof import('sourcegraph')
 }): Promise<TextDocumentDecoration[]> => {
     if (!settings['git.blame.lineDecorations']) {
