@@ -49,7 +49,7 @@ export function activate(context: sourcegraph.ExtensionContext): void {
         try {
             editor.setDecorations(
                 decorationType,
-                await getBlameDecorations({ uri: editor.document.uri, settings, selections })
+                await getBlameDecorations({ uri: editor.document.uri, now: Date.now(), settings, selections, sourcegraph })
             )
         } catch (err) {
             console.error('Decoration error:', err)

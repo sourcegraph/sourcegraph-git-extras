@@ -1,11 +1,11 @@
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
-import * as sourcegraph from 'sourcegraph'
+import { Selection, TextDocumentDecoration } from 'sourcegraph'
 import gql from 'tagged-template-noop'
 import { Settings } from './extension'
 import { resolveURI } from './uri'
 import { memoizeAsync } from './util/memoizeAsync'
 
-const getDecorationFromHunk = (hunk: Hunk, now: number, decoratedLine: number): sourcegraph.TextDocumentDecoration => ({
+export const getDecorationFromHunk = (hunk: Hunk, now: number, decoratedLine: number, sourcegraph: typeof import('sourcegraph')): TextDocumentDecoration => ({
     range: new sourcegraph.Range(decoratedLine, 0, decoratedLine, 0),
     isWholeLine: true,
     after: {
@@ -25,8 +25,8 @@ const getDecorationFromHunk = (hunk: Hunk, now: number, decoratedLine: number): 
     },
 })
 
-const getBlameDecorationsForSelections = (hunks: Hunk[], selections: sourcegraph.Selection[], now: number) => {
-    const decorations: sourcegraph.TextDocumentDecoration[] = []
+export const getBlameDecorationsForSelections = (hunks: Hunk[], selections: Selection[], now: number, sourcegraph: typeof import('sourcegraph')) => {
+    const decorations: TextDocumentDecoration[] = []
     for (const hunk of hunks) {
         // Hunk start and end lines are 1-indexed, but selection lines are zero-indexed
         const hunkStartLineZeroBased = hunk.startLine - 1
@@ -41,17 +41,17 @@ const getBlameDecorationsForSelections = (hunks: Hunk[], selections: sourcegraph
             // outside of the selection's boundaries, the start line of the selection.
             const decoratedLine =
                 hunkStartLineZeroBased < selection.start.line ? selection.start.line : hunkStartLineZeroBased
-            decorations.push(getDecorationFromHunk(hunk, now, decoratedLine))
+            decorations.push(getDecorationFromHunk(hunk, now, decoratedLine, sourcegraph))
         }
     }
     return decorations
 }
 
-const getAllBlameDecorations = (hunks: Hunk[], now: number) =>
-    hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1))
+export const getAllBlameDecorations = (hunks: Hunk[], now: number, sourcegraph: typeof import('sourcegraph')) =>
+    hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, sourcegraph))
 
 const queryBlameHunks = memoizeAsync(
-    async (uri: string): Promise<Hunk[]> => {
+    async ({uri, sourcegraph}: {uri: string, sourcegraph: typeof import('sourcegraph')}): Promise<Hunk[]> => {
         const { repo, rev, path } = resolveURI(uri)
         const { data, errors } = await sourcegraph.commands.executeCommand(
             'queryGraphQL',
@@ -90,7 +90,7 @@ const queryBlameHunks = memoizeAsync(
         }
         return data.repository.commit.blob.blame
     },
-    uri => uri
+    ({ uri }) => uri
 )
 
 /**
@@ -103,24 +103,29 @@ export const getBlameDecorations = async ({
     uri,
     settings,
     selections,
+    now,
+    queryHunks = queryBlameHunks,
+    sourcegraph
 }: {
     uri: string
     settings: Settings
-    selections: sourcegraph.Selection[] | null
-}): Promise<sourcegraph.TextDocumentDecoration[]> => {
+    selections: Selection[] | null,
+    now: number,
+    queryHunks?: ({ uri, sourcegraph } : { uri: string, sourcegraph: typeof import('sourcegraph') }) => Promise<Hunk[]>,
+    sourcegraph: typeof import('sourcegraph')
+}): Promise<TextDocumentDecoration[]> => {
     if (!settings['git.blame.lineDecorations']) {
         return []
     }
-    const hunks = await queryBlameHunks(uri)
-    const now = Date.now()
+    const hunks = await queryHunks({ uri, sourcegraph })
     if (selections !== null) {
-        return getBlameDecorationsForSelections(hunks, selections, now)
+        return getBlameDecorationsForSelections(hunks, selections, now, sourcegraph)
     } else {
-        return getAllBlameDecorations(hunks, now)
+        return getAllBlameDecorations(hunks, now, sourcegraph)
     }
 }
 
-interface Hunk {
+export interface Hunk {
     startLine: number
     endLine: number
     author: {
