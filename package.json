@@ -84,7 +84,8 @@
       "src/**/*.ts?(x)"
     ],
     "exclude": [
-      "**/*.test.ts?(x)"
+      "**/*.test.ts?(x)",
+      "src/util/stubs.ts"
     ],
     "extension": [
       ".tsx",
