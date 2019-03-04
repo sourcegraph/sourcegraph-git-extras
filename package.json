@@ -105,7 +105,7 @@
     "@sourcegraph/tsconfig": "^4.0.0",
     "@sourcegraph/tslint-config": "^12.3.1",
     "@types/expect": "1.20.4",
-    "@types/lodash": "4.14.121",
+    "@types/lodash": "4.14.122",
     "@types/mocha": "5.2.6",
     "@types/node": "10.12.18",
     "@types/sinon": "7.0.8",
