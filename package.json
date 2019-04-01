@@ -108,7 +108,7 @@
     "@types/lodash": "4.14.122",
     "@types/mocha": "5.2.6",
     "@types/node": "10.12.18",
-    "@types/sinon": "7.0.9",
+    "@types/sinon": "7.0.11",
     "expect": "^24.1.0",
     "husky": "^1.1.2",
     "lnfs-cli": "^2.1.0",
