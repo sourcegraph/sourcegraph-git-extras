@@ -12,6 +12,6 @@
     "noEmit": true,
     "rootDir": "src",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+  },
 }
