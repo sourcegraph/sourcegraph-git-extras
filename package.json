@@ -117,7 +117,7 @@
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
     "parcel-bundler": "^1.11.0",
-    "prettier": "^1.17.0",
+    "prettier": "^1.17.1",
     "sinon": "^7.2.5",
     "source-map-support": "^0.5.9",
     "sourcegraph": "^23.0.1",
