@@ -103,7 +103,7 @@
     "@commitlint/config-conventional": "^8.0.0",
     "@sourcegraph/prettierrc": "^2.2.0",
     "@sourcegraph/tsconfig": "^4.0.0",
-    "@sourcegraph/tslint-config": "^13.2.0",
+    "@sourcegraph/tslint-config": "^13.3.0",
     "@types/expect": "1.20.4",
     "@types/lodash": "4.14.134",
     "@types/mocha": "5.2.7",
