@@ -23,7 +23,8 @@
         "title": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} blame",
         "actionItem": {
           "label": "Blame",
-          "description": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} Git blame line annotations"
+          "description": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} Git blame line annotations",
+          "pressed": "config.git.blame.lineDecorations"
         }
       }
     ],
