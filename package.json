@@ -121,7 +121,7 @@
     "sinon": "^7.2.5",
     "source-map-support": "^0.5.9",
     "sourcegraph": "^23.0.1",
-    "ts-node": "^7.0.1",
+    "ts-node": "^8.3.0",
     "tslint": "^5.11.0",
     "typescript": "^3.3.3333",
     "vscode-languageserver-types": "^3.14.0"
