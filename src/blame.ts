@@ -168,4 +168,3 @@ function truncate(s: string, max: number, omission = '…'): string {
     }
     return `${s.slice(0, max)}${omission}`
 }
-
