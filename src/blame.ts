@@ -6,29 +6,32 @@ import { resolveURI } from './uri'
 import { memoizeAsync } from './util/memoizeAsync'
 
 export const getDecorationFromHunk = (
-    hunk: Hunk,
+    { message, author, commit }: Hunk,
     now: number,
     decoratedLine: number,
     sourcegraph: typeof import('sourcegraph')
-): TextDocumentDecoration => ({
-    range: new sourcegraph.Range(decoratedLine, 0, decoratedLine, 0),
-    isWholeLine: true,
-    after: {
-        light: {
-            color: 'rgba(0, 0, 25, 0.55)',
-            backgroundColor: 'rgba(193, 217, 255, 0.65)',
+): TextDocumentDecoration => {
+    const displayName = truncate(author.person.displayName, 25)
+    const username = author.person.user ? `(${author.person.user.username}) ` : ''
+    const distance = formatDistanceStrict(author.date, now, { addSuffix: true })
+    return {
+        range: new sourcegraph.Range(decoratedLine, 0, decoratedLine, 0),
+        isWholeLine: true,
+        after: {
+            light: {
+                color: 'rgba(0, 0, 25, 0.55)',
+                backgroundColor: 'rgba(193, 217, 255, 0.65)',
+            },
+            dark: {
+                color: 'rgba(235, 235, 255, 0.55)',
+                backgroundColor: 'rgba(15, 43, 89, 0.65)',
+            },
+            contentText: `${username}${displayName}, ${distance}: • ${truncate(message, 45)}`,
+            hoverMessage: `${author.person.email} • ${truncate(message, 1000)}`,
+            linkURL: new URL(commit.url, sourcegraph.internal.sourcegraphURL.toString()).href,
         },
-        dark: {
-            color: 'rgba(235, 235, 255, 0.55)',
-            backgroundColor: 'rgba(15, 43, 89, 0.65)',
-        },
-        contentText: `${truncate(hunk.author.person.displayName, 25)}, ${formatDistanceStrict(hunk.author.date, now, {
-            addSuffix: true,
-        })}: • ${truncate(hunk.message, 45)}`,
-        hoverMessage: `${truncate(hunk.message, 1000)}`,
-        linkURL: new URL(hunk.commit.url, sourcegraph.internal.sourcegraphURL.toString()).href,
-    },
-})
+    }
+}
 
 export const getBlameDecorationsForSelections = (
     hunks: Hunk[],
@@ -75,7 +78,11 @@ const queryBlameHunks = memoizeAsync(
                                     endLine
                                     author {
                                         person {
+                                            email
                                             displayName
+                                            user {
+                                                username
+                                            }
                                         }
                                         date
                                     }
@@ -140,7 +147,11 @@ export interface Hunk {
     endLine: number
     author: {
         person: {
+            email: string
             displayName: string
+            user?: {
+                username: string
+            }
         }
         date: string
     }
@@ -157,3 +168,4 @@ function truncate(s: string, max: number, omission = '…'): string {
     }
     return `${s.slice(0, max)}${omission}`
 }
+
