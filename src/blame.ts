@@ -149,9 +149,9 @@ export interface Hunk {
         person: {
             email: string
             displayName: string
-            user?: {
+            user: {
                 username: string
-            }
+            } | null
         }
         date: string
     }

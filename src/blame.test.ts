@@ -13,7 +13,9 @@ const FIXTURE_HUNK_1: Hunk = {
     endLine: 2,
     author: {
         person: {
+            email: 'email@email.email',
             displayName: 'a',
+            user: null,
         },
         date: '2018-09-10T21:52:45Z',
     },
@@ -29,7 +31,9 @@ const FIXTURE_HUNK_2: Hunk = {
     endLine: 3,
     author: {
         person: {
+            email: 'email@email.email',
             displayName: 'e',
+            user: null,
         },
         date: '2018-11-10T21:52:45Z',
     },
@@ -45,7 +49,9 @@ const FIXTURE_HUNK_3: Hunk = {
     endLine: 4,
     author: {
         person: {
+            email: 'email@email.email',
             displayName: 'i',
+            user: null,
         },
         date: '2018-10-10T21:52:45Z',
     },
@@ -69,7 +75,7 @@ describe('getDecorationsFromHunk()', () => {
                     backgroundColor: 'rgba(15, 43, 89, 0.65)',
                     color: 'rgba(235, 235, 255, 0.55)',
                 },
-                hoverMessage: 'c',
+                hoverMessage: `${FIXTURE_HUNK_1.author.person.email} • ${FIXTURE_HUNK_1.message}`,
                 light: {
                     backgroundColor: 'rgba(193, 217, 255, 0.65)',
                     color: 'rgba(0, 0, 25, 0.55)',
@@ -105,7 +111,9 @@ describe('getDecorationsFromHunk()', () => {
                 ...FIXTURE_HUNK_1,
                 author: {
                     person: {
+                        email: 'email@email.email',
                         displayName: 'asdgjdsag asdklgbasdghladg asdgjlhbasdgjlhabsdg asdgilbadsgiobasgd',
+                        user: null,
                     },
                     date: '2018-09-10T21:52:45Z',
                 },
