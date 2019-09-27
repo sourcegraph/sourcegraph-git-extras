@@ -62,6 +62,26 @@ const FIXTURE_HUNK_3: Hunk = {
     },
 }
 
+const FIXTURE_HUNK_4: Hunk = {
+    startLine: 4,
+    endLine: 5,
+    author: {
+        person: {
+            email: 'email@email.email',
+            displayName: 'i',
+            user: {
+                username: 'testUserName',
+            },
+        },
+        date: '2018-10-10T21:52:45Z',
+    },
+    rev: 'j',
+    message: 'k',
+    commit: {
+        url: 'l',
+    },
+}
+
 const NOW = +new Date('2018-12-01T21:52:45Z')
 
 const SOURCEGRAPH = createMockSourcegraphAPI()
@@ -131,7 +151,7 @@ describe('getDecorationsFromHunk()', () => {
 describe('getBlameDecorationsForSelections()', () => {
     it('adds decorations only for hunks that are within the selections', () => {
         const decorations = getBlameDecorationsForSelections(
-            [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3],
+            [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
             [new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(1, 0), new SOURCEGRAPH.Position(1, 0)) as any],
             NOW,
             SOURCEGRAPH as any
@@ -141,7 +161,7 @@ describe('getBlameDecorationsForSelections()', () => {
 
     it('handles multiple selections', () => {
         const decorations = getBlameDecorationsForSelections(
-            [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3],
+            [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
             [
                 new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(1, 0), new SOURCEGRAPH.Position(1, 0)) as any,
                 new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(2, 0), new SOURCEGRAPH.Position(5, 0)) as any,
@@ -153,12 +173,13 @@ describe('getBlameDecorationsForSelections()', () => {
         expect(decorations).toEqual([
             getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
         ])
     })
 
     it('handles multiple hunks per selection', () => {
         const decorations = getBlameDecorationsForSelections(
-            [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3],
+            [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
             [new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(0, 0), new SOURCEGRAPH.Position(5, 0)) as any],
             NOW,
             SOURCEGRAPH as any
@@ -167,6 +188,7 @@ describe('getBlameDecorationsForSelections()', () => {
             getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
         ])
     })
 
@@ -190,11 +212,16 @@ describe('getBlameDecorationsForSelections()', () => {
 describe('getAllBlameDecorations()', () => {
     it('adds decorations for all hunks', () => {
         expect(
-            getAllBlameDecorations([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3], NOW, SOURCEGRAPH as any)
+            getAllBlameDecorations(
+                [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
+                NOW,
+                SOURCEGRAPH as any
+            )
         ).toEqual([
             getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
         ])
     })
 })
@@ -209,7 +236,7 @@ describe('getBlameDecorations()', () => {
                 },
                 now: NOW,
                 selections: null,
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3]),
+                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([])
@@ -224,13 +251,14 @@ describe('getBlameDecorations()', () => {
                 },
                 now: NOW,
                 selections: null,
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3]),
+                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([
             getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
             getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
         ])
     })
 
@@ -243,11 +271,24 @@ describe('getBlameDecorations()', () => {
                 },
                 now: NOW,
                 selections: [
-                    new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(2, 0), new SOURCEGRAPH.Position(2, 0)) as any,
+                    new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(3, 0), new SOURCEGRAPH.Position(3, 0)) as any,
                 ],
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3]),
+                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
                 sourcegraph: SOURCEGRAPH as any,
             })
-        ).toEqual([getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any)])
+        ).toEqual([getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any)])
+    })
+
+    it('renders username in decoration content message', async () => {
+        expect(
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any).after!.contentText!.startsWith(
+                `(${FIXTURE_HUNK_4.author.person.user!.username}) ${FIXTURE_HUNK_4.author.person.displayName}`
+            )
+        ).toBe(true)
+        expect(
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any).after!.contentText!.startsWith(
+                `${FIXTURE_HUNK_3.author.person.displayName}`
+            )
+        ).toBe(true)
     })
 })
