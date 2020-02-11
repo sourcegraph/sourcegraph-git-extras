@@ -5,6 +5,7 @@ import { getBlameDecorations } from './blame'
 
 export interface Settings {
     ['git.blame.lineDecorations']?: boolean
+    ['git.blame.decorateWholeFile']?: boolean
 }
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
