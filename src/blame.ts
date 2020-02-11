@@ -135,7 +135,7 @@ export const getBlameDecorations = async ({
         return []
     }
     const hunks = await queryHunks({ uri, sourcegraph })
-    if (selections !== null) {
+    if (selections !== null && !settings['git.blame.decorateWholeFile']) {
         return getBlameDecorationsForSelections(hunks, selections, now, sourcegraph)
     } else {
         return getAllBlameDecorations(hunks, now, sourcegraph)
