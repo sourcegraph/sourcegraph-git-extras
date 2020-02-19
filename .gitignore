@@ -3,3 +3,5 @@ node_modules/
 coverage/
 .cache/
 .nyc_output/
+yarn-error.log
+npm-debug.log
