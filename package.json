@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/sourcegraph/sourcegraph/master/shared/src/schema/extension.schema.json",
   "name": "git-extras",
   "publisher": "sourcegraph",
   "title": "Git extras",
@@ -25,7 +26,8 @@
         "actionItem": {
           "label": "Blame",
           "description": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} Git blame line annotations",
-          "pressed": "config.git.blame.lineDecorations"
+          "pressed": "config.git.blame.lineDecorations",
+          "iconURL": "https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/master/icon/git_logo.svg?sanitize=true"
         }
       }
     ],
@@ -123,7 +125,7 @@
     "mkdirp": "^0.5.1",
     "mocha": "^6.1.4",
     "nyc": "^13.3.0",
-    "parcel-bundler": "^1.12.3",
+    "parcel-bundler": "^1.12.4",
     "prettier": "^1.19.1",
     "sinon": "^7.3.2",
     "source-map-support": "^0.5.12",
