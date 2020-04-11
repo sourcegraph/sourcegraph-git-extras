@@ -25,7 +25,7 @@
         "title": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} blame",
         "actionItem": {
           "label": "Blame",
-          "description": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} Git blame line annotations",
+          "description": "${config.git.blame.lineDecorations && \"Hide\" || \"Show\"} Git blame line annotations${!config.git.blame.decorateWholeFile && \" on selected lines\" || \"\"}",
           "pressed": "config.git.blame.lineDecorations",
           "iconURL": "https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/63dd95962c43b95b3f3a9ea2aa0165d6b38a958c/icon/git_logo.svg?sanitize=true"
         }
