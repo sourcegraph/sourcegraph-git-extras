@@ -18,9 +18,9 @@ export function activate(context: sourcegraph.ExtensionContext): void {
 
     if (sourcegraph.app.activeWindowChanges) {
         const selectionChanges = from(sourcegraph.app.activeWindowChanges).pipe(
-            filter((window): window is sourcegraph.Window => window !== undefined),
+            filter((window): window is Exclude<typeof window, undefined> => window !== undefined),
             switchMap(window => window.activeViewComponentChanges),
-            filter((editor): editor is sourcegraph.CodeEditor => editor !== undefined),
+            filter((editor): editor is sourcegraph.CodeEditor => !!editor && editor.type === 'CodeEditor'),
             switchMap(editor => from(editor.selectionsChanges).pipe(map(selections => ({ editor, selections }))))
         )
         // When the configuration or current file changes, publish new decorations.
@@ -36,7 +36,7 @@ export function activate(context: sourcegraph.ExtensionContext): void {
         context.subscriptions.add(
             combineLatest(configurationChanges, from(sourcegraph.workspace.openedTextDocuments)).subscribe(async () => {
                 const editor = activeEditor()
-                if (editor) {
+                if (editor && editor.type === 'CodeEditor') {
                     await decorate(editor, null)
                 }
             })
