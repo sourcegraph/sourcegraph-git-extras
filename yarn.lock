@@ -6171,10 +6171,10 @@ source-map@^0.5.0, source-map@^0.5.3, source-map@^0.5.6:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
 
-sourcegraph@^24.1.0:
-  version "24.1.0"
-  resolved "https://registry.npmjs.org/sourcegraph/-/sourcegraph-24.1.0.tgz#2fb147d04ad1d75a6a5f2bd0566ab73d07dfa271"
-  integrity sha512-9m/CaPvVYYHHLosCac8syhgy4QnCiRQXqvyXCDvfuTqvFaLwApfOaP2De3cacvrA2Pjj+ZwnvIlxwA1uCFP1Uw==
+sourcegraph@^24.2.0:
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-24.2.0.tgz#95c207ebd9c595ea76a0f61f3ccc893010ba16bb"
+  integrity sha512-hhViwCZuglxLIjHNPI9ffg7DFECJqWYclZEQ8HxPFPAGmawFcBcv9H9H7/6sP5vE48c6cb+O31hVgbIzDB/0TQ==
 
 spawn-wrap@^1.4.2:
   version "1.4.2"
