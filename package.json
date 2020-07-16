@@ -132,7 +132,7 @@
     "sourcegraph": "^24.7.0",
     "ts-node": "^8.3.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.9.3",
+    "typescript": "^3.9.7",
     "vscode-languageserver-types": "^3.14.0"
   },
   "dependencies": {
