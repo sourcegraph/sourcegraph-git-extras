@@ -8,6 +8,16 @@
   "activationEvents": [
     "*"
   ],
+  "tags": [
+    "blame",
+    "github",
+    "gitlab",
+    "code host",
+    "author"
+  ],
+  "categories": [
+    "Code analysis"
+  ],
   "contributes": {
     "actions": [
       {
