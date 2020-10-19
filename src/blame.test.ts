@@ -284,7 +284,7 @@ describe('getBlameDecorations()', () => {
             await getBlameDecorations({
                 uri: 'a',
                 settings: {
-                    'git.blame.decorations': 'file'
+                    'git.blame.decorations': 'file',
                 },
                 now: NOW,
                 selections: [
