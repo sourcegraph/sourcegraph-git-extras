@@ -227,27 +227,12 @@ describe('getAllBlameDecorations()', () => {
 })
 
 describe('getBlameDecorations()', () => {
-    it('gets no decorations if git.blame.lineDecorations is false', async () => {
-        expect(
-            await getBlameDecorations({
-                uri: 'a',
-                settings: {
-                    'git.blame.lineDecorations': false,
-                },
-                now: NOW,
-                selections: null,
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
-                sourcegraph: SOURCEGRAPH as any,
-            })
-        ).toEqual([])
-    })
-
     it('gets decorations for all hunks if no selections are passed', async () => {
         expect(
             await getBlameDecorations({
                 uri: 'a',
                 settings: {
-                    'git.blame.lineDecorations': true,
+                    'git.blame.decorations': 'line',
                 },
                 now: NOW,
                 selections: null,
@@ -267,7 +252,7 @@ describe('getBlameDecorations()', () => {
             await getBlameDecorations({
                 uri: 'a',
                 settings: {
-                    'git.blame.lineDecorations': true,
+                    'git.blame.decorations': 'line',
                 },
                 now: NOW,
                 selections: [
@@ -279,13 +264,27 @@ describe('getBlameDecorations()', () => {
         ).toEqual([getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any)])
     })
 
-    it('gets decorations for all hunks if git.blame.decorateWholeFile is true', async () => {
+    it('gets no decorations if git.blame.decorations is "none"', async () => {
         expect(
             await getBlameDecorations({
                 uri: 'a',
                 settings: {
-                    'git.blame.lineDecorations': true,
-                    'git.blame.decorateWholeFile': true,
+                    'git.blame.decorations': 'none',
+                },
+                now: NOW,
+                selections: null,
+                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                sourcegraph: SOURCEGRAPH as any,
+            })
+        ).toEqual([])
+    })
+
+    it('gets decorations for all hunks if git.blame.decorations is "file"', async () => {
+        expect(
+            await getBlameDecorations({
+                uri: 'a',
+                settings: {
+                    'git.blame.decorations': 'file'
                 },
                 now: NOW,
                 selections: [
@@ -313,5 +312,44 @@ describe('getBlameDecorations()', () => {
                 `${FIXTURE_HUNK_3.author.person.displayName}`
             )
         ).toBe(true)
+    })
+
+    // Backcompat tests ("git.blame.(lineDecorations|decorateWholeFile)")
+    it('gets no decorations if git.blame.lineDecorations is false', async () => {
+        expect(
+            await getBlameDecorations({
+                uri: 'a',
+                settings: {
+                    'git.blame.lineDecorations': false,
+                },
+                now: NOW,
+                selections: null,
+                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                sourcegraph: SOURCEGRAPH as any,
+            })
+        ).toEqual([])
+    })
+
+    it('gets decorations for all hunks if git.blame.decorateWholeFile is true', async () => {
+        expect(
+            await getBlameDecorations({
+                uri: 'a',
+                settings: {
+                    'git.blame.lineDecorations': true,
+                    'git.blame.decorateWholeFile': true,
+                },
+                now: NOW,
+                selections: [
+                    new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(3, 0), new SOURCEGRAPH.Position(3, 0)) as any,
+                ],
+                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                sourcegraph: SOURCEGRAPH as any,
+            })
+        ).toEqual([
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
+        ])
     })
 })

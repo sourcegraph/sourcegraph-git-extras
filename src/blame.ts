@@ -131,11 +131,16 @@ export const getBlameDecorations = async ({
     queryHunks?: ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }) => Promise<Hunk[]>
     sourcegraph: typeof import('sourcegraph')
 }): Promise<TextDocumentDecoration[]> => {
-    if (!settings['git.blame.lineDecorations']) {
+    // Backcompat: Check old properties, but "git.blame.decorations" takes precedence over them.
+    const decorations =
+        settings['git.blame.decorations'] ||
+        (settings['git.blame.decorateWholeFile'] ? 'file' : settings['git.blame.lineDecorations'] ? 'line' : 'none')
+
+    if (decorations === 'none') {
         return []
     }
     const hunks = await queryHunks({ uri, sourcegraph })
-    if (selections !== null && !settings['git.blame.decorateWholeFile']) {
+    if (selections !== null && decorations === 'line') {
         return getBlameDecorationsForSelections(hunks, selections, now, sourcegraph)
     } else {
         return getAllBlameDecorations(hunks, now, sourcegraph)
