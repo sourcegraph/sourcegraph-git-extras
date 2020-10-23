@@ -60,7 +60,11 @@
         "git.blame.decorations": {
           "description": "Whether to decorate all lines in a file, only selected lines, or none at all.",
           "type": "string",
-          "enum": ["none", "line", "file"],
+          "enum": [
+            "none",
+            "line",
+            "file"
+          ],
           "default": "none"
         }
       }
@@ -79,7 +83,7 @@
   "scripts": {
     "prettier-check": "npm run prettier -- --write=false",
     "prettier": "prettier '**/*.{js?(on),ts?(x),scss,yml,md}' --write --list-different",
-    "tslint": "tslint -c tslint.json -p tsconfig.json './src/*.ts?(x)' './*.ts?(x)'",
+    "eslint": "eslint 'src/**/*.ts'",
     "typecheck": "tsc -p .",
     "test": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' mocha --require ts-node/register --require source-map-support/register --opts mocha.opts",
     "cover": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' nyc --require ts-node/register --require source-map-support/register --all mocha --opts mocha.opts --timeout 10000",
@@ -115,14 +119,15 @@
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@sourcegraph/eslint-config": "^0.20.12",
     "@sourcegraph/prettierrc": "^2.2.0",
     "@sourcegraph/tsconfig": "^4.0.1",
-    "@sourcegraph/tslint-config": "^13.4.0",
     "@types/expect": "1.20.4",
     "@types/lodash": "4.14.161",
     "@types/mocha": "5.2.7",
     "@types/node": "13.13.5",
     "@types/sinon": "7.0.13",
+    "eslint": "^7.11.0",
     "expect": "^24.1.0",
     "husky": "^1.3.1",
     "lnfs-cli": "^2.1.0",

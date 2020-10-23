@@ -11,7 +11,7 @@ export interface Settings {
     ['git.blame.decorateWholeFile']?: boolean
 }
 
-const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
+const decorationType = sourcegraph.app?.createDecorationType()
 
 export function activate(context: sourcegraph.ExtensionContext): void {
     // TODO(lguychard) sourcegraph.configuration is currently not rxjs-compatible.
@@ -21,33 +21,21 @@ export function activate(context: sourcegraph.ExtensionContext): void {
 
     // Backcompat: Set 'git.blame.decorations' based on previous settings values
     ;(async () => {
-        try {
-            const settings = sourcegraph.configuration.get<Settings>().value
-            const initialDecorations = settings['git.blame.decorations']
-            if (!initialDecorations) {
-                if (settings['git.blame.lineDecorations'] === false) {
-                    await sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none')
-                } else if (settings['git.blame.lineDecorations'] === true) {
-                    if (settings['git.blame.decorateWholeFile']) {
-                        await sourcegraph.commands.executeCommand(
-                            'updateConfiguration',
-                            ['git.blame.decorations'],
-                            'file'
-                        )
-                    } else {
-                        await sourcegraph.commands.executeCommand(
-                            'updateConfiguration',
-                            ['git.blame.decorations'],
-                            'line'
-                        )
-                    }
+        const settings = sourcegraph.configuration.get<Settings>().value
+        const initialDecorations = settings['git.blame.decorations']
+        if (!initialDecorations) {
+            if (settings['git.blame.lineDecorations'] === false) {
+                await sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none')
+            } else if (settings['git.blame.lineDecorations'] === true) {
+                if (settings['git.blame.decorateWholeFile']) {
+                    await sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'file')
                 } else {
-                    // Default to 'line'
                     await sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
                 }
+            } else {
+                // Default to 'line'
+                await sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
             }
-        } catch {
-            // noop
         }
     })().catch(() => {
         // noop
@@ -62,19 +50,24 @@ export function activate(context: sourcegraph.ExtensionContext): void {
         )
         // When the configuration or current file changes, publish new decorations.
         context.subscriptions.add(
-            combineLatest(configurationChanges, selectionChanges).subscribe(([, { editor, selections }]) =>
-                decorate(editor, selections)
-            )
+            combineLatest(configurationChanges, selectionChanges).subscribe(([, { editor, selections }]) => {
+                decorate(editor, selections).catch(() => {
+                    // noop
+                })
+            })
         )
     } else {
         // Backcompat: the extension host does not support activeWindowChanges or CodeEditor.selectionsChanges.
         // When configuration changes or onDidOpenTextDocument fires, add decorations for all blame hunks.
-        const activeEditor = () => sourcegraph.app.activeWindow && sourcegraph.app.activeWindow.activeViewComponent
+        const activeEditor = (): sourcegraph.CodeEditor | sourcegraph.DirectoryViewer | undefined =>
+            sourcegraph.app.activeWindow?.activeViewComponent
         context.subscriptions.add(
-            combineLatest(configurationChanges, from(sourcegraph.workspace.openedTextDocuments)).subscribe(async () => {
+            combineLatest(configurationChanges, from(sourcegraph.workspace.openedTextDocuments)).subscribe(() => {
                 const editor = activeEditor()
                 if (editor && editor.type === 'CodeEditor') {
-                    await decorate(editor, null)
+                    decorate(editor, null).catch(() => {
+                        // noop
+                    })
                 }
             })
         )
@@ -95,8 +88,8 @@ export function activate(context: sourcegraph.ExtensionContext): void {
                     sourcegraph,
                 })
             )
-        } catch (err) {
-            console.error('Decoration error:', err)
+        } catch (error) {
+            console.error('Decoration error:', error)
         }
     }
 }
