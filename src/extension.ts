@@ -23,12 +23,17 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     const settings = sourcegraph.configuration.get<Settings>().value
     const initialDecorations = settings['git.blame.decorations']
     if (!initialDecorations) {
-        if (settings['git.blame.lineDecorations']) {
+        if (settings['git.blame.lineDecorations'] === false) {
+            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none')
+        } else if (settings['git.blame.lineDecorations'] === true) {
             if (settings['git.blame.decorateWholeFile']) {
                 sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'file')
             } else {
                 sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
             }
+        } else {
+            // Default to 'line'
+            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
         }
     }
 
