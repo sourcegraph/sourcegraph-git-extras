@@ -49,7 +49,9 @@ export function activate(context: sourcegraph.ExtensionContext): void {
         } catch {
             // noop
         }
-    })()
+    })().catch(() => {
+        // noop
+    })
 
     if (sourcegraph.app.activeWindowChanges) {
         const selectionChanges = from(sourcegraph.app.activeWindowChanges).pipe(
