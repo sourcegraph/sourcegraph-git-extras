@@ -35,7 +35,7 @@
         "actionItem": {
           "label": "Blame",
           "description": "${((!config.git.blame.decorations || config.git.blame.decorations === 'none') && 'Show Git blame line annotations on selected lines') || (config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || 'Hide Git blame line annotations'}",
-          "pressed": "(config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file') || (config.git.blame.lineDecorations)",
+          "pressed": "(config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file')",
           "iconURL": "https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/63dd95962c43b95b3f3a9ea2aa0165d6b38a958c/icon/git_logo.svg?sanitize=true"
         }
       }
@@ -57,16 +57,6 @@
     "configuration": {
       "title": "Git extras",
       "properties": {
-        "git.blame.lineDecorations": {
-          "description": "Whether to show Git blame annotations at the end of each line.",
-          "type": "boolean",
-          "default": false
-        },
-        "git.blame.decorateWholeFile": {
-          "description": "Whether to decorate all lines in a file, rather than just selected lines.",
-          "type": "boolean",
-          "default": false
-        },
         "git.blame.decorations": {
           "description": "Whether to decorate all lines in a file, only selected lines, or none at all.",
           "type": "string",
