@@ -131,11 +131,13 @@ export const getBlameDecorations = async ({
     queryHunks?: ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }) => Promise<Hunk[]>
     sourcegraph: typeof import('sourcegraph')
 }): Promise<TextDocumentDecoration[]> => {
-    if (!settings['git.blame.lineDecorations']) {
+    const decorations = settings['git.blame.decorations'] || 'none'
+
+    if (decorations === 'none') {
         return []
     }
     const hunks = await queryHunks({ uri, sourcegraph })
-    if (selections !== null && !settings['git.blame.decorateWholeFile']) {
+    if (selections !== null && decorations === 'line') {
         return getBlameDecorationsForSelections(hunks, selections, now, sourcegraph)
     } else {
         return getAllBlameDecorations(hunks, now, sourcegraph)
