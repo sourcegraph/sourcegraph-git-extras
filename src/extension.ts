@@ -20,22 +20,32 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     context.subscriptions.add(sourcegraph.configuration.subscribe(() => configurationChanges.next(undefined)))
 
     // Backcompat: Set 'git.blame.decorations' based on previous settings values
-    const settings = sourcegraph.configuration.get<Settings>().value
-    const initialDecorations = settings['git.blame.decorations']
-    if (!initialDecorations) {
-        if (settings['git.blame.lineDecorations'] === false) {
-            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none').catch(noop)
-        } else if (settings['git.blame.lineDecorations'] === true) {
-            if (settings['git.blame.decorateWholeFile']) {
-                sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'file').catch(noop)
-            } else {
-                sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line').catch(noop)
+    ;(async () => {
+        try {
+            const settings = sourcegraph.configuration.get<Settings>().value
+            const initialDecorations = settings['git.blame.decorations']
+            if (!initialDecorations) {
+                if (settings['git.blame.lineDecorations'] === false) {
+                    sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none')
+                } else if (settings['git.blame.lineDecorations'] === true) {
+                    if (settings['git.blame.decorateWholeFile']) {
+                        sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'file')
+                    } else {
+                        await sourcegraph.commands.executeCommand(
+                            'updateConfiguration',
+                            ['git.blame.decorations'],
+                            'line'
+                        )
+                    }
+                } else {
+                    // Default to 'line'
+                    sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
+                }
             }
-        } else {
-            // Default to 'line'
-            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line').catch(noop)
+        } catch {
+            // noop
         }
-    }
+    })()
 
     if (sourcegraph.app.activeWindowChanges) {
         const selectionChanges = from(sourcegraph.app.activeWindowChanges).pipe(
@@ -83,8 +93,4 @@ export function activate(context: sourcegraph.ExtensionContext): void {
             console.error('Decoration error:', err)
         }
     }
-}
-
-function noop(): void {
-    // noop
 }
