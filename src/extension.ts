@@ -24,16 +24,16 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     const initialDecorations = settings['git.blame.decorations']
     if (!initialDecorations) {
         if (settings['git.blame.lineDecorations'] === false) {
-            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none')
+            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'none').catch(noop)
         } else if (settings['git.blame.lineDecorations'] === true) {
             if (settings['git.blame.decorateWholeFile']) {
-                sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'file')
+                sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'file').catch(noop)
             } else {
-                sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
+                sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line').catch(noop)
             }
         } else {
             // Default to 'line'
-            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line')
+            sourcegraph.commands.executeCommand('updateConfiguration', ['git.blame.decorations'], 'line').catch(noop)
         }
     }
 
@@ -83,4 +83,8 @@ export function activate(context: sourcegraph.ExtensionContext): void {
             console.error('Decoration error:', err)
         }
     }
+}
+
+function noop(): void {
+    // noop
 }
