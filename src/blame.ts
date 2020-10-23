@@ -38,7 +38,7 @@ export const getBlameDecorationsForSelections = (
     selections: Selection[],
     now: number,
     sourcegraph: typeof import('sourcegraph')
-) => {
+): TextDocumentDecoration[] => {
     const decorations: TextDocumentDecoration[] = []
     for (const hunk of hunks) {
         // Hunk start and end lines are 1-indexed, but selection lines are zero-indexed
@@ -60,8 +60,11 @@ export const getBlameDecorationsForSelections = (
     return decorations
 }
 
-export const getAllBlameDecorations = (hunks: Hunk[], now: number, sourcegraph: typeof import('sourcegraph')) =>
-    hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, sourcegraph))
+export const getAllBlameDecorations = (
+    hunks: Hunk[],
+    now: number,
+    sourcegraph: typeof import('sourcegraph')
+): TextDocumentDecoration[] => hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, sourcegraph))
 
 const queryBlameHunks = memoizeAsync(
     async ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }): Promise<Hunk[]> => {
@@ -139,9 +142,8 @@ export const getBlameDecorations = async ({
     const hunks = await queryHunks({ uri, sourcegraph })
     if (selections !== null && decorations === 'line') {
         return getBlameDecorationsForSelections(hunks, selections, now, sourcegraph)
-    } else {
-        return getAllBlameDecorations(hunks, now, sourcegraph)
     }
+    return getAllBlameDecorations(hunks, now, sourcegraph)
 }
 
 export interface Hunk {
@@ -164,9 +166,9 @@ export interface Hunk {
     }
 }
 
-function truncate(s: string, max: number, omission = '…'): string {
-    if (s.length <= max) {
-        return s
+function truncate(string: string, max: number, omission = '…'): string {
+    if (string.length <= max) {
+        return string
     }
-    return `${s.slice(0, max)}${omission}`
+    return `${string.slice(0, max)}${omission}`
 }

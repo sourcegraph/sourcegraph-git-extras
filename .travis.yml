@@ -9,7 +9,7 @@ jobs:
     - stage: test
       script:
         - npm run prettier-check
-        - npm run tslint
+        - npm run eslint
         - npm run typecheck
         - npm run build
         - npm run cover

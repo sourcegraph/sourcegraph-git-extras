@@ -1,3 +1,3 @@
 describe('extension', () => {
-    it('works', () => void 0)
+    it('works', () => undefined)
 })

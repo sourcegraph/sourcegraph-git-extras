@@ -118,9 +118,9 @@ describe('getDecorationsFromHunk()', () => {
             },
             NOW,
             0,
-            SOURCEGRAPH as any
+            SOURCEGRAPH
         )
-        expect(decoration.after && decoration.after.contentText).toEqual(
+        expect(decoration.after?.contentText).toEqual(
             'a, 3 months ago: • asdgjdsag asdklgbasdghladg asdgjlhbasdgjlhabs…'
         )
     })
@@ -142,9 +142,7 @@ describe('getDecorationsFromHunk()', () => {
             0,
             SOURCEGRAPH as any
         )
-        expect(decoration.after && decoration.after.contentText).toEqual(
-            'asdgjdsag asdklgbasdghlad…, 3 months ago: • c'
-        )
+        expect(decoration.after?.contentText).toEqual('asdgjdsag asdklgbasdghlad…, 3 months ago: • c')
     })
 })
 
@@ -301,7 +299,7 @@ describe('getBlameDecorations()', () => {
         ])
     })
 
-    it('renders username in decoration content message', async () => {
+    it('renders username in decoration content message', () => {
         expect(
             getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any).after!.contentText!.startsWith(
                 `(${FIXTURE_HUNK_4.author.person.user!.username}) ${FIXTURE_HUNK_4.author.person.displayName}`

@@ -25,7 +25,7 @@ class Selection extends Range {
  * Creates an object that (mostly) implements the Sourcegraph API,
  * with all methods being Sinon spys and all Subscribables being Subjects.
  */
-export const createMockSourcegraphAPI = (sourcegraphURL?: string) => {
+export const createMockSourcegraphAPI = (sourcegraphURL?: string): any => {
     const rootChanges = new Subject<void>()
     // const shims: typeof import('sourcegraph') = {
     const openedTextDocuments = new Subject<sourcegraph.TextDocument>()
