@@ -27,14 +27,14 @@
           [
             "git.blame.decorations"
           ],
-          "${((!config.git.blame.decorations || config.git.blame.decorations === 'none') && 'line') || (config.git.blame.decorations === 'line' && 'file') || 'none'}",
+          "${(config.git.blame.decorations === 'line' && 'file') || (config.git.blame.decorations === 'file' && 'none') || 'line'}",
           null
         ],
         "category": "Git",
-        "title": "${((!config.git.blame.decorations || config.git.blame.decorations === 'none') && 'Show blame for selected lines') || (config.git.blame.decorations === 'line' && 'Show blame for the whole file') || 'Hide blame'}",
+        "title": "${(config.git.blame.decorations === 'line' && 'Show blame for the whole file') || (config.git.blame.decorations === 'file' && 'Hide blame') || 'Show blame for selected lines'}",
         "actionItem": {
           "label": "Blame",
-          "description": "${((!config.git.blame.decorations || config.git.blame.decorations === 'none') && 'Show Git blame line annotations on selected lines') || (config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || 'Hide Git blame line annotations'}",
+          "description": "${(config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || (config.git.blame.decorations === 'file' && 'Hide Git blame line annotations') || 'Show Git blame line annotations on selected lines'}",
           "pressed": "(config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file')",
           "iconURL": "https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/63dd95962c43b95b3f3a9ea2aa0165d6b38a958c/icon/git_logo.svg?sanitize=true"
         }
