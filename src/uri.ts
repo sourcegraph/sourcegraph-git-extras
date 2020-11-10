@@ -6,9 +6,9 @@ export function resolveURI(uri: string): { repo: string; rev: string; path: stri
     const url = new URL(uri)
     if (url.protocol === 'git:') {
         return {
-            repo: (url.host + url.pathname).replace(/^\/*/, '').toLowerCase(),
-            rev: url.search.slice(1).toLowerCase(),
-            path: url.hash.slice(1),
+            repo: (url.host + decodeURIComponent(url.pathname)).replace(/^\/*/, ''),
+            rev: decodeURIComponent(url.search.slice(1)),
+            path: decodeURIComponent(url.hash.slice(1)),
         }
     }
     throw new Error(`unrecognized URI: ${JSON.stringify(uri)} (supported URI schemes: git)`)
