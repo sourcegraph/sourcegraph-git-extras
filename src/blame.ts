@@ -88,9 +88,6 @@ const queryBlameHunks = memoizeAsync(
                                     }
                                     message
                                     rev
-                                    commit {
-                                        url
-                                    }
                                 }
                             }
                         }
@@ -105,7 +102,10 @@ const queryBlameHunks = memoizeAsync(
         if (!data || !data.repository || !data.repository.commit || !data.repository.commit.blob) {
             throw new Error('no blame data is available (repository, commit, or path not found)')
         }
-        return data.repository.commit.blob.blame
+        return data.repository.commit.blob.blame.map((hunk: Hunk) => {
+            hunk.commit = { url: `/${repo}/-/commit/${hunk.rev}` }
+            return hunk
+        })
     },
     ({ uri }) => uri
 )
