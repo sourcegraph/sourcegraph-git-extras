@@ -5,10 +5,6 @@ import { getBlameDecorations } from './blame'
 
 export interface Settings {
     ['git.blame.decorations']?: 'none' | 'line' | 'file'
-    // The following two settings are deprecated, but we will still look for them
-    // to 'onboard' users to new setting
-    ['git.blame.lineDecorations']?: boolean
-    ['git.blame.decorateWholeFile']?: boolean
 }
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
@@ -65,4 +61,33 @@ export function activate(context: sourcegraph.ExtensionContext): void {
             console.error('Decoration error:', err)
         }
     }
+
+    context.subscriptions.add(
+        sourcegraph.commands.registerCommand(
+            'git.blame.toggleDecorations',
+            (decorations: 'none' | 'line' | 'file', isSourcegraphString: 'true' | 'false') => {
+                const isSourcegraph: boolean = JSON.parse(isSourcegraphString)
+                const settings = sourcegraph.configuration.get<Settings>()
+
+                if (isSourcegraph) {
+                    settings.update(
+                        'git.blame.decorations',
+                        decorations === 'none' ? 'line' : decorations === 'line' ? 'file' : 'none'
+                    )
+                } else {
+                    // TODO: code host `observeSelections` functions are unused
+                    // and/or incomplete, when decorations == 'line', we only decorate lines from
+                    // the initial hash. for now, we toggle between 'file' and 'none' on code hosts
+                    console.log(
+                        'want to update decorations to ',
+                        decorations === 'line' || decorations === 'file' ? 'none' : 'file'
+                    )
+                    settings.update(
+                        'git.blame.decorations',
+                        decorations === 'line' || decorations === 'file' ? 'none' : 'file'
+                    )
+                }
+            }
+        )
+    )
 }
