@@ -1,7 +1,7 @@
 import { BehaviorSubject, combineLatest, from } from 'rxjs'
 import { filter, map, switchMap } from 'rxjs/operators'
 import * as sourcegraph from 'sourcegraph'
-import { getBlameDecorations } from './blame'
+import { getBlameDecorations, getBlameStatusBarItem, queryBlameHunks, getHunksForSelections } from './blame'
 
 export interface Settings {
     ['git.blame.decorations']?: 'none' | 'line' | 'file'
@@ -12,6 +12,8 @@ export interface Settings {
 }
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
+
+const statusBarItemType = sourcegraph.app.createStatusBarItemType()
 
 export function activate(context: sourcegraph.ExtensionContext): void {
     // TODO(lguychard) sourcegraph.configuration is currently not rxjs-compatible.
@@ -51,18 +53,30 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     async function decorate(editor: sourcegraph.CodeEditor, selections: sourcegraph.Selection[] | null): Promise<void> {
         const settings = sourcegraph.configuration.get<Settings>().value
         try {
+            const hunks = await queryBlameHunks({ uri: editor.document.uri, sourcegraph })
+            const now = Date.now()
+
+            // Check if the extension host supports status bar items (Introduced in Sourcegraph version 3.26.0).
+            // If so, display blame info for the first selected line in the status bar.
+            if ('setStatusBarItem' in editor) {
+                editor.setStatusBarItem(
+                    statusBarItemType,
+                    getBlameStatusBarItem({ selections, hunks, now, sourcegraph })
+                )
+            }
+
             editor.setDecorations(
                 decorationType,
-                await getBlameDecorations({
-                    uri: editor.document.uri,
-                    now: Date.now(),
+                getBlameDecorations({
+                    hunks,
+                    now,
                     settings,
                     selections,
                     sourcegraph,
                 })
             )
         } catch (err) {
-            console.error('Decoration error:', err)
+            console.error('Decoration/status bar error:', err)
         }
     }
 }
