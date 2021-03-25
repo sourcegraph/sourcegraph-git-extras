@@ -1,7 +1,7 @@
 import { BehaviorSubject, combineLatest, from } from 'rxjs'
 import { filter, map, switchMap } from 'rxjs/operators'
 import * as sourcegraph from 'sourcegraph'
-import { getBlameDecorations, getBlameStatusBarItem, queryBlameHunks, getHunksForSelections } from './blame'
+import { getBlameDecorations, getBlameStatusBarItem, queryBlameHunks } from './blame'
 
 export interface Settings {
     ['git.blame.decorations']?: 'none' | 'line' | 'file'
