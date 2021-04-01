@@ -1084,10 +1084,10 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
   integrity sha512-NYrtPht0wGzhwe9+/idPaBB+TqkY9AhTvOLMkThm0IoEfLaiVQZwBwyJ5puCkO3AUCWrmcoePjp2mbFocKy4SQ==
 
-"@types/node@13.13.45":
-  version "13.13.45"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.45.tgz#e6676bcca092bae5751d015f074a234d5a82eb63"
-  integrity sha512-703YTEp8AwQeapI0PTXDOj+Bs/mtdV/k9VcTP7z/de+lx6XjFMKdB+JhKnK+6PZ5za7omgZ3V6qm/dNkMj/Zow==
+"@types/node@13.13.48":
+  version "13.13.48"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.48.tgz#46a3df718aed5217277f2395a682e055a487e341"
+  integrity sha512-z8wvSsgWQzkr4sVuMEEOvwMdOQjiRY2Y/ZW4fDfjfe3+TfQrZqFKOthBgk2RnVEmtOKrkwdZ7uTvsxTBLjKGDQ==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
