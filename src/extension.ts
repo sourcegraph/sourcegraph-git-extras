@@ -13,7 +13,7 @@ export interface Settings {
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
 
-const statusBarItemType = sourcegraph.app.createStatusBarItemType()
+const statusBarItemType = sourcegraph.app.createStatusBarItemType && sourcegraph.app.createStatusBarItemType()
 
 export function activate(context: sourcegraph.ExtensionContext): void {
     // TODO(lguychard) sourcegraph.configuration is currently not rxjs-compatible.
