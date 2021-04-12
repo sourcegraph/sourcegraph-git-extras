@@ -230,7 +230,7 @@ describe('getAllBlameDecorations()', () => {
 describe('getBlameDecorations()', () => {
     it('gets decorations for all hunks if no selections are passed', async () => {
         expect(
-            await getBlameDecorations({
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'line',
                 },
@@ -249,7 +249,7 @@ describe('getBlameDecorations()', () => {
 
     it('gets decorations for the selections if selections are passed', async () => {
         expect(
-            await getBlameDecorations({
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'line',
                 },
@@ -265,7 +265,7 @@ describe('getBlameDecorations()', () => {
 
     it('gets no decorations if git.blame.decorations is "none"', async () => {
         expect(
-            await getBlameDecorations({
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'none',
                 },
@@ -279,7 +279,7 @@ describe('getBlameDecorations()', () => {
 
     it('gets decorations for all hunks if git.blame.decorations is "file"', async () => {
         expect(
-            await getBlameDecorations({
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'file',
                 },

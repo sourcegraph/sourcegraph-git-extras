@@ -1,10 +1,70 @@
 import compareDesc from 'date-fns/compareDesc'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
-import { Selection, TextDocumentDecoration, StatusBarItem } from 'sourcegraph'
+import { Selection, StatusBarItem, TextDocumentDecoration } from 'sourcegraph'
 import gql from 'tagged-template-noop'
 import { Settings } from './extension'
 import { resolveURI } from './uri'
 import { memoizeAsync } from './util/memoizeAsync'
+
+/**
+ * Get display info shared between status bar items and text document decorations.
+ */
+const getDisplayInfoFromHunk = (
+    { author, commit, message }: Pick<Hunk, 'author' | 'commit' | 'message'>,
+    now: number,
+    sourcegraph: typeof import('sourcegraph')
+): { displayName: string; username: string; distance: string; linkURL: string; hoverMessage: string } => {
+    const displayName = truncate(author.person.displayName, 25)
+    const username = author.person.user ? `(${author.person.user.username}) ` : ''
+    const distance = formatDistanceStrict(author.date, now, { addSuffix: true })
+    const linkURL = new URL(commit.url, sourcegraph.internal.sourcegraphURL.toString()).href
+    const hoverMessage = `${author.person.email} • ${truncate(message, 1000)}`
+
+    return {
+        displayName,
+        username,
+        distance,
+        linkURL,
+        hoverMessage,
+    }
+}
+
+/**
+ * Get hunks and 0-indexed start lines for the given selections.
+ *
+ * @param selections If null, returns all hunks
+ */
+export const getHunksForSelections = (
+    hunks: Hunk[],
+    selections: Selection[] | null
+): { selectionStartLine: number; hunk: Hunk }[] => {
+    const hunksForSelections: { selectionStartLine: number; hunk: Hunk }[] = []
+
+    if (!selections) {
+        return hunks.map(hunk => ({ hunk, selectionStartLine: hunk.startLine - 1 }))
+    }
+
+    for (const hunk of hunks) {
+        // Hunk start and end lines are 1-indexed, but selection lines are zero-indexed
+        const hunkStartLineZeroBased = hunk.startLine - 1
+        // A Hunk's end line overlaps with the next hunk's start line.
+        // -2 here to avoid decorating the same line twice.
+        const hunkEndLineZeroBased = hunk.endLine - 2
+        for (const selection of selections) {
+            if (selection.end.line < hunkStartLineZeroBased || selection.start.line > hunkEndLineZeroBased) {
+                continue
+            }
+
+            // Decorate the hunk's start line or, if the hunk's start line is
+            // outside of the selection's boundaries, the start line of the selection.
+            const selectionStartLine =
+                hunkStartLineZeroBased < selection.start.line ? selection.start.line : hunkStartLineZeroBased
+            hunksForSelections.push({ selectionStartLine, hunk })
+        }
+    }
+
+    return hunksForSelections
+}
 
 export const getDecorationFromHunk = (
     hunk: Hunk,
@@ -28,7 +88,7 @@ export const getDecorationFromHunk = (
             },
             contentText: `${username}${displayName}, ${distance}: • ${truncate(hunk.message, 45)}`,
             hoverMessage,
-            linkURL: linkURL,
+            linkURL,
         },
     }
 }
@@ -38,11 +98,10 @@ export const getBlameDecorationsForSelections = (
     selections: Selection[],
     now: number,
     sourcegraph: typeof import('sourcegraph')
-) => {
-    return getHunksForSelections(hunks, selections).map(({ hunk, selectionStartLine }) =>
+) =>
+    getHunksForSelections(hunks, selections).map(({ hunk, selectionStartLine }) =>
         getDecorationFromHunk(hunk, now, selectionStartLine, sourcegraph)
     )
-}
 
 export const getAllBlameDecorations = (hunks: Hunk[], now: number, sourcegraph: typeof import('sourcegraph')) =>
     hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, sourcegraph))
@@ -175,66 +234,6 @@ export const getBlameStatusBarItem = ({
         command: { id: 'open', args: [linkURL] },
         tooltip: hoverMessage,
     }
-}
-
-/**
- * Get display info shared between status bar items and text document decorations.
- */
-const getDisplayInfoFromHunk = (
-    { author, commit, message }: Pick<Hunk, 'author' | 'commit' | 'message'>,
-    now: number,
-    sourcegraph: typeof import('sourcegraph')
-): { displayName: string; username: string; distance: string; linkURL: string; hoverMessage: string } => {
-    const displayName = truncate(author.person.displayName, 25)
-    const username = author.person.user ? `(${author.person.user.username}) ` : ''
-    const distance = formatDistanceStrict(author.date, now, { addSuffix: true })
-    const linkURL = new URL(commit.url, sourcegraph.internal.sourcegraphURL.toString()).href
-    const hoverMessage = `${author.person.email} • ${truncate(message, 1000)}`
-
-    return {
-        displayName,
-        username,
-        distance,
-        linkURL,
-        hoverMessage,
-    }
-}
-
-/**
- * Get hunks and 0-indexed start lines for the given selections.
- *
- * @param selections If null, returns all hunks
- */
-export const getHunksForSelections = (
-    hunks: Hunk[],
-    selections: Selection[] | null
-): { selectionStartLine: number; hunk: Hunk }[] => {
-    const hunksForSelections: { selectionStartLine: number; hunk: Hunk }[] = []
-
-    if (!selections) {
-        return hunks.map(hunk => ({ hunk, selectionStartLine: hunk.startLine - 1 }))
-    }
-
-    for (const hunk of hunks) {
-        // Hunk start and end lines are 1-indexed, but selection lines are zero-indexed
-        const hunkStartLineZeroBased = hunk.startLine - 1
-        // A Hunk's end line overlaps with the next hunk's start line.
-        // -2 here to avoid decorating the same line twice.
-        const hunkEndLineZeroBased = hunk.endLine - 2
-        for (const selection of selections) {
-            if (selection.end.line < hunkStartLineZeroBased || selection.start.line > hunkEndLineZeroBased) {
-                continue
-            }
-
-            // Decorate the hunk's start line or, if the hunk's start line is
-            // outside of the selection's boundaries, the start line of the selection.
-            const selectionStartLine =
-                hunkStartLineZeroBased < selection.start.line ? selection.start.line : hunkStartLineZeroBased
-            hunksForSelections.push({ selectionStartLine, hunk })
-        }
-    }
-
-    return hunksForSelections
 }
 
 export interface HunkForSelection {
