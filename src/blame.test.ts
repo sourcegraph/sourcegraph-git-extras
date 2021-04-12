@@ -3,6 +3,7 @@ import {
     getAllBlameDecorations,
     getBlameDecorations,
     getBlameDecorationsForSelections,
+    getBlameStatusBarItem,
     getDecorationFromHunk,
     Hunk,
 } from './blame'
@@ -229,14 +230,13 @@ describe('getAllBlameDecorations()', () => {
 describe('getBlameDecorations()', () => {
     it('gets decorations for all hunks if no selections are passed', async () => {
         expect(
-            await getBlameDecorations({
-                uri: 'a',
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'line',
                 },
                 now: NOW,
                 selections: null,
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([
@@ -249,8 +249,7 @@ describe('getBlameDecorations()', () => {
 
     it('gets decorations for the selections if selections are passed', async () => {
         expect(
-            await getBlameDecorations({
-                uri: 'a',
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'line',
                 },
@@ -258,7 +257,7 @@ describe('getBlameDecorations()', () => {
                 selections: [
                     new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(3, 0), new SOURCEGRAPH.Position(3, 0)) as any,
                 ],
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any)])
@@ -266,14 +265,13 @@ describe('getBlameDecorations()', () => {
 
     it('gets no decorations if git.blame.decorations is "none"', async () => {
         expect(
-            await getBlameDecorations({
-                uri: 'a',
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'none',
                 },
                 now: NOW,
                 selections: null,
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([])
@@ -281,8 +279,7 @@ describe('getBlameDecorations()', () => {
 
     it('gets decorations for all hunks if git.blame.decorations is "file"', async () => {
         expect(
-            await getBlameDecorations({
-                uri: 'a',
+            getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'file',
                 },
@@ -290,7 +287,7 @@ describe('getBlameDecorations()', () => {
                 selections: [
                     new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(3, 0), new SOURCEGRAPH.Position(3, 0)) as any,
                 ],
-                queryHunks: () => Promise.resolve([FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4]),
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([
@@ -312,5 +309,40 @@ describe('getBlameDecorations()', () => {
                 `${FIXTURE_HUNK_3.author.person.displayName}`
             )
         ).toBe(true)
+    })
+})
+
+describe('getBlameStatusBarItem()', () => {
+    it('displays the hunk for the first selected line', () => {
+        expect(
+            getBlameStatusBarItem({
+                selections: [
+                    new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(3, 0), new SOURCEGRAPH.Position(3, 0)) as any,
+                ],
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
+                sourcegraph: SOURCEGRAPH as any,
+                now: NOW,
+            }).text
+        ).toBe('Blame: (testUserName) i, 2 months ago')
+    })
+
+    it('displays the most recent hunk if there are no selections', () => {
+        expect(
+            getBlameStatusBarItem({
+                selections: [],
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
+                sourcegraph: SOURCEGRAPH as any,
+                now: NOW,
+            }).text
+        ).toBe('Blame: e, 21 days ago')
+
+        expect(
+            getBlameStatusBarItem({
+                selections: null,
+                hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
+                sourcegraph: SOURCEGRAPH as any,
+                now: NOW,
+            }).text
+        ).toBe('Blame: e, 21 days ago')
     })
 })
