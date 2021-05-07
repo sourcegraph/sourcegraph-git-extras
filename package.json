@@ -124,7 +124,7 @@
     "@types/node": "13.13.51",
     "@types/sinon": "9.0.9",
     "expect": "^24.1.0",
-    "husky": "^4.3.5",
+    "husky": "^4.3.8",
     "lnfs-cli": "^2.1.0",
     "lodash": "^4.17.20",
     "mkdirp": "^0.5.1",
