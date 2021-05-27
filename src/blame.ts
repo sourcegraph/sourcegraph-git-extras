@@ -204,7 +204,7 @@ export const getBlameStatusBarItem = ({
             )
 
             return {
-                text: `Blame: ${username}${displayName}, ${distance}`,
+                text: `Author: ${username}${displayName}, ${distance}`,
                 command: { id: 'open', args: [linkURL] },
                 tooltip: hoverMessage,
             }
@@ -220,7 +220,7 @@ export const getBlameStatusBarItem = ({
     if (!mostRecentHunk) {
         // Probably a network error
         return {
-            text: 'Blame: not found',
+            text: 'Author: not found',
         }
     }
     const { displayName, username, distance, linkURL, hoverMessage } = getDisplayInfoFromHunk(
@@ -230,7 +230,7 @@ export const getBlameStatusBarItem = ({
     )
 
     return {
-        text: `Blame: ${username}${displayName}, ${distance}`,
+        text: `Author: ${username}${displayName}, ${distance}`,
         command: { id: 'open', args: [linkURL] },
         tooltip: hoverMessage,
     }
