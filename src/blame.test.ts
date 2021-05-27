@@ -323,7 +323,7 @@ describe('getBlameStatusBarItem()', () => {
                 sourcegraph: SOURCEGRAPH as any,
                 now: NOW,
             }).text
-        ).toBe('Blame: (testUserName) i, 2 months ago')
+        ).toBe('Author: (testUserName) i, 2 months ago')
     })
 
     it('displays the most recent hunk if there are no selections', () => {
@@ -334,7 +334,7 @@ describe('getBlameStatusBarItem()', () => {
                 sourcegraph: SOURCEGRAPH as any,
                 now: NOW,
             }).text
-        ).toBe('Blame: e, 21 days ago')
+        ).toBe('Author: e, 21 days ago')
 
         expect(
             getBlameStatusBarItem({
@@ -343,6 +343,6 @@ describe('getBlameStatusBarItem()', () => {
                 sourcegraph: SOURCEGRAPH as any,
                 now: NOW,
             }).text
-        ).toBe('Blame: e, 21 days ago')
+        ).toBe('Author: e, 21 days ago')
     })
 })
