@@ -89,7 +89,9 @@ const SOURCEGRAPH = createMockSourcegraphAPI()
 
 describe('getDecorationsFromHunk()', () => {
     it('creates a TextDocumentDecoration from a Hunk', () => {
-        expect(getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any)).toEqual({
+        expect(
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any)
+        ).toEqual({
             after: {
                 contentText: 'a, 3 months ago: • c',
                 dark: {
@@ -119,6 +121,7 @@ describe('getDecorationsFromHunk()', () => {
             },
             NOW,
             0,
+            { 'git.blame.showPreciseDate': false },
             SOURCEGRAPH as any
         )
         expect(decoration.after && decoration.after.contentText).toEqual(
@@ -141,6 +144,7 @@ describe('getDecorationsFromHunk()', () => {
             },
             NOW,
             0,
+            { 'git.blame.showPreciseDate': false },
             SOURCEGRAPH as any
         )
         expect(decoration.after && decoration.after.contentText).toEqual(
@@ -155,9 +159,12 @@ describe('getBlameDecorationsForSelections()', () => {
             [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
             [new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(1, 0), new SOURCEGRAPH.Position(1, 0)) as any],
             NOW,
+            { 'git.blame.showPreciseDate': false },
             SOURCEGRAPH as any
         )
-        expect(decorations).toEqual([getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any)])
+        expect(decorations).toEqual([
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+        ])
     })
 
     it('handles multiple selections', () => {
@@ -169,12 +176,13 @@ describe('getBlameDecorationsForSelections()', () => {
                 new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(6, 0), new SOURCEGRAPH.Position(10, 0)) as any,
             ],
             NOW,
+            { 'git.blame.showPreciseDate': false },
             SOURCEGRAPH as any
         )
         expect(decorations).toEqual([
-            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
         ])
     })
 
@@ -183,13 +191,14 @@ describe('getBlameDecorationsForSelections()', () => {
             [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
             [new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(0, 0), new SOURCEGRAPH.Position(5, 0)) as any],
             NOW,
+            { 'git.blame.showPreciseDate': false },
             SOURCEGRAPH as any
         )
         expect(decorations).toEqual([
-            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
         ])
     })
 
@@ -204,9 +213,12 @@ describe('getBlameDecorationsForSelections()', () => {
             ],
             [new SOURCEGRAPH.Selection(new SOURCEGRAPH.Position(2, 0), new SOURCEGRAPH.Position(2, 0)) as any],
             NOW,
+            { 'git.blame.showPreciseDate': false },
             SOURCEGRAPH as any
         )
-        expect(decorations).toEqual([getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 2, SOURCEGRAPH as any)])
+        expect(decorations).toEqual([
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 2, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+        ])
     })
 })
 
@@ -216,13 +228,14 @@ describe('getAllBlameDecorations()', () => {
             getAllBlameDecorations(
                 [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 NOW,
+                { 'git.blame.showPreciseDate': false },
                 SOURCEGRAPH as any
             )
         ).toEqual([
-            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
         ])
     })
 })
@@ -233,6 +246,7 @@ describe('getBlameDecorations()', () => {
             getBlameDecorations({
                 settings: {
                     'git.blame.decorations': 'line',
+                    'git.blame.showPreciseDate': false,
                 },
                 now: NOW,
                 selections: null,
@@ -240,10 +254,10 @@ describe('getBlameDecorations()', () => {
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([
-            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
         ])
     })
 
@@ -260,7 +274,9 @@ describe('getBlameDecorations()', () => {
                 hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
             })
-        ).toEqual([getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any)])
+        ).toEqual([
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+        ])
     })
 
     it('gets no decorations if git.blame.decorations is "none"', async () => {
@@ -291,23 +307,33 @@ describe('getBlameDecorations()', () => {
                 sourcegraph: SOURCEGRAPH as any,
             })
         ).toEqual([
-            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any),
-            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_2, NOW, 1, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
+            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any),
         ])
     })
 
     it('renders username in decoration content message', async () => {
         expect(
-            getDecorationFromHunk(FIXTURE_HUNK_4, NOW, 3, SOURCEGRAPH as any).after!.contentText!.startsWith(
+            getDecorationFromHunk(
+                FIXTURE_HUNK_4,
+                NOW,
+                3,
+                { 'git.blame.showPreciseDate': false },
+                SOURCEGRAPH as any
+            ).after!.contentText!.startsWith(
                 `(${FIXTURE_HUNK_4.author.person.user!.username}) ${FIXTURE_HUNK_4.author.person.displayName}`
             )
         ).toBe(true)
         expect(
-            getDecorationFromHunk(FIXTURE_HUNK_3, NOW, 2, SOURCEGRAPH as any).after!.contentText!.startsWith(
-                `${FIXTURE_HUNK_3.author.person.displayName}`
-            )
+            getDecorationFromHunk(
+                FIXTURE_HUNK_3,
+                NOW,
+                2,
+                { 'git.blame.showPreciseDate': false },
+                SOURCEGRAPH as any
+            ).after!.contentText!.startsWith(`${FIXTURE_HUNK_3.author.person.displayName}`)
         ).toBe(true)
     })
 })
@@ -321,6 +347,7 @@ describe('getBlameStatusBarItem()', () => {
                 ],
                 hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
+                settings: { 'git.blame.showPreciseDate': false },
                 now: NOW,
             }).text
         ).toBe('Author: (testUserName) i, 2 months ago')
@@ -332,6 +359,7 @@ describe('getBlameStatusBarItem()', () => {
                 selections: [],
                 hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
+                settings: { 'git.blame.showPreciseDate': false },
                 now: NOW,
             }).text
         ).toBe('Author: e, 21 days ago')
@@ -341,6 +369,7 @@ describe('getBlameStatusBarItem()', () => {
                 selections: null,
                 hunks: [FIXTURE_HUNK_1, FIXTURE_HUNK_2, FIXTURE_HUNK_3, FIXTURE_HUNK_4],
                 sourcegraph: SOURCEGRAPH as any,
+                settings: { 'git.blame.showPreciseDate': false },
                 now: NOW,
             }).text
         ).toBe('Author: e, 21 days ago')
