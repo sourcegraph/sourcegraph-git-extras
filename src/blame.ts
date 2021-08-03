@@ -10,12 +10,17 @@ import { memoizeAsync } from './util/memoizeAsync'
 /**
  * Get display info shared between status bar items and text document decorations.
  */
-const getDisplayInfoFromHunk = (
-    { author, commit, message }: Pick<Hunk, 'author' | 'commit' | 'message'>,
-    now: number,
-    settings: Pick<Settings, 'git.blame.showPreciseDate'>,
+const getDisplayInfoFromHunk = ({
+    hunk: { author, commit, message },
+    now,
+    settings,
+    sourcegraph,
+}: {
+    hunk: Pick<Hunk, 'author' | 'commit' | 'message'>
+    now: number
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>
     sourcegraph: typeof import('sourcegraph')
-): { displayName: string; username: string; dateString: string; linkURL: string; hoverMessage: string } => {
+}): { displayName: string; username: string; dateString: string; linkURL: string; hoverMessage: string } => {
     const displayName = truncate(author.person.displayName, 25)
     const username = author.person.user ? `(${author.person.user.username}) ` : ''
     const dateString = settings['git.blame.showPreciseDate']
@@ -77,12 +82,12 @@ export const getDecorationFromHunk = (
     settings: Pick<Settings, 'git.blame.showPreciseDate'>,
     sourcegraph: typeof import('sourcegraph')
 ): TextDocumentDecoration => {
-    const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk(
+    const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk({
         hunk,
         now,
         settings,
-        sourcegraph
-    )
+        sourcegraph,
+    })
 
     return {
         range: new sourcegraph.Range(decoratedLine, 0, decoratedLine, 0),
@@ -214,12 +219,12 @@ export const getBlameStatusBarItem = ({
         const hunksForSelections = getHunksForSelections(hunks, selections)
         if (hunksForSelections[0]) {
             // Display the commit for the first selected hunk in the status bar.
-            const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk(
-                hunksForSelections[0].hunk,
+            const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk({
+                hunk: hunksForSelections[0].hunk,
                 now,
                 settings,
-                sourcegraph
-            )
+                sourcegraph,
+            })
 
             return {
                 text: `Author: ${username}${displayName}, ${dateString}`,
@@ -241,12 +246,12 @@ export const getBlameStatusBarItem = ({
             text: 'Author: not found',
         }
     }
-    const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk(
-        mostRecentHunk.hunk,
+    const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk({
+        hunk: mostRecentHunk.hunk,
         now,
         settings,
-        sourcegraph
-    )
+        sourcegraph,
+    })
 
     return {
         text: `Author: ${username}${displayName}, ${dateString}`,
