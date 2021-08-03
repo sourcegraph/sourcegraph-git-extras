@@ -9,6 +9,7 @@ export interface Settings {
     // to 'onboard' users to new setting
     ['git.blame.lineDecorations']?: boolean
     ['git.blame.decorateWholeFile']?: boolean
+    ['git.blame.showPreciseDate']?: boolean
 }
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
@@ -61,7 +62,7 @@ export function activate(context: sourcegraph.ExtensionContext): void {
             if ('setStatusBarItem' in editor) {
                 editor.setStatusBarItem(
                     statusBarItemType,
-                    getBlameStatusBarItem({ selections, hunks, now, sourcegraph })
+                    getBlameStatusBarItem({ selections, hunks, now, settings, sourcegraph })
                 )
             }
 

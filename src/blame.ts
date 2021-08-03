@@ -1,4 +1,5 @@
 import compareDesc from 'date-fns/compareDesc'
+import format from 'date-fns/format'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import { Selection, StatusBarItem, TextDocumentDecoration } from 'sourcegraph'
 import gql from 'tagged-template-noop'
@@ -9,21 +10,29 @@ import { memoizeAsync } from './util/memoizeAsync'
 /**
  * Get display info shared between status bar items and text document decorations.
  */
-const getDisplayInfoFromHunk = (
-    { author, commit, message }: Pick<Hunk, 'author' | 'commit' | 'message'>,
-    now: number,
+const getDisplayInfoFromHunk = ({
+    hunk: { author, commit, message },
+    now,
+    settings,
+    sourcegraph,
+}: {
+    hunk: Pick<Hunk, 'author' | 'commit' | 'message'>
+    now: number
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>
     sourcegraph: typeof import('sourcegraph')
-): { displayName: string; username: string; distance: string; linkURL: string; hoverMessage: string } => {
+}): { displayName: string; username: string; dateString: string; linkURL: string; hoverMessage: string } => {
     const displayName = truncate(author.person.displayName, 25)
     const username = author.person.user ? `(${author.person.user.username}) ` : ''
-    const distance = formatDistanceStrict(author.date, now, { addSuffix: true })
+    const dateString = settings['git.blame.showPreciseDate']
+        ? format(author.date, 'MMM dd, y')
+        : formatDistanceStrict(author.date, now, { addSuffix: true })
     const linkURL = new URL(commit.url, sourcegraph.internal.sourcegraphURL.toString()).href
     const hoverMessage = `${author.person.email} • ${truncate(message, 1000)}`
 
     return {
         displayName,
         username,
-        distance,
+        dateString,
         linkURL,
         hoverMessage,
     }
@@ -70,9 +79,15 @@ export const getDecorationFromHunk = (
     hunk: Hunk,
     now: number,
     decoratedLine: number,
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>,
     sourcegraph: typeof import('sourcegraph')
 ): TextDocumentDecoration => {
-    const { displayName, username, distance, linkURL, hoverMessage } = getDisplayInfoFromHunk(hunk, now, sourcegraph)
+    const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk({
+        hunk,
+        now,
+        settings,
+        sourcegraph,
+    })
 
     return {
         range: new sourcegraph.Range(decoratedLine, 0, decoratedLine, 0),
@@ -86,7 +101,7 @@ export const getDecorationFromHunk = (
                 color: 'rgba(235, 235, 255, 0.55)',
                 backgroundColor: 'rgba(15, 43, 89, 0.65)',
             },
-            contentText: `${username}${displayName}, ${distance}: • ${truncate(hunk.message, 45)}`,
+            contentText: `${username}${displayName}, ${dateString}: • ${truncate(hunk.message, 45)}`,
             hoverMessage,
             linkURL,
         },
@@ -97,14 +112,19 @@ export const getBlameDecorationsForSelections = (
     hunks: Hunk[],
     selections: Selection[],
     now: number,
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>,
     sourcegraph: typeof import('sourcegraph')
 ) =>
     getHunksForSelections(hunks, selections).map(({ hunk, selectionStartLine }) =>
-        getDecorationFromHunk(hunk, now, selectionStartLine, sourcegraph)
+        getDecorationFromHunk(hunk, now, selectionStartLine, settings, sourcegraph)
     )
 
-export const getAllBlameDecorations = (hunks: Hunk[], now: number, sourcegraph: typeof import('sourcegraph')) =>
-    hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, sourcegraph))
+export const getAllBlameDecorations = (
+    hunks: Hunk[],
+    now: number,
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>,
+    sourcegraph: typeof import('sourcegraph')
+) => hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, settings, sourcegraph))
 
 export const queryBlameHunks = memoizeAsync(
     async ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }): Promise<Hunk[]> => {
@@ -176,9 +196,9 @@ export const getBlameDecorations = ({
         return []
     }
     if (selections !== null && decorations === 'line') {
-        return getBlameDecorationsForSelections(hunks, selections, now, sourcegraph)
+        return getBlameDecorationsForSelections(hunks, selections, now, settings, sourcegraph)
     } else {
-        return getAllBlameDecorations(hunks, now, sourcegraph)
+        return getAllBlameDecorations(hunks, now, settings, sourcegraph)
     }
 }
 
@@ -186,25 +206,28 @@ export const getBlameStatusBarItem = ({
     selections,
     hunks,
     now,
+    settings,
     sourcegraph,
 }: {
     selections: Selection[] | null
     hunks: Hunk[]
     now: number
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>
     sourcegraph: typeof import('sourcegraph')
 }): StatusBarItem => {
     if (selections && selections.length > 0) {
         const hunksForSelections = getHunksForSelections(hunks, selections)
         if (hunksForSelections[0]) {
             // Display the commit for the first selected hunk in the status bar.
-            const { displayName, username, distance, linkURL, hoverMessage } = getDisplayInfoFromHunk(
-                hunksForSelections[0].hunk,
+            const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk({
+                hunk: hunksForSelections[0].hunk,
                 now,
-                sourcegraph
-            )
+                settings,
+                sourcegraph,
+            })
 
             return {
-                text: `Author: ${username}${displayName}, ${distance}`,
+                text: `Author: ${username}${displayName}, ${dateString}`,
                 command: { id: 'open', args: [linkURL] },
                 tooltip: hoverMessage,
             }
@@ -223,14 +246,15 @@ export const getBlameStatusBarItem = ({
             text: 'Author: not found',
         }
     }
-    const { displayName, username, distance, linkURL, hoverMessage } = getDisplayInfoFromHunk(
-        mostRecentHunk.hunk,
+    const { displayName, username, dateString, linkURL, hoverMessage } = getDisplayInfoFromHunk({
+        hunk: mostRecentHunk.hunk,
         now,
-        sourcegraph
-    )
+        settings,
+        sourcegraph,
+    })
 
     return {
-        text: `Author: ${username}${displayName}, ${distance}`,
+        text: `Author: ${username}${displayName}, ${dateString}`,
         command: { id: 'open', args: [linkURL] },
         tooltip: hoverMessage,
     }
