@@ -126,7 +126,7 @@
     "@types/expect": "1.20.4",
     "@types/lodash": "4.14.177",
     "@types/mocha": "8.2.3",
-    "@types/node": "16.11.6",
+    "@types/node": "16.11.11",
     "@types/sinon": "10.0.6",
     "expect": "^24.1.0",
     "husky": "^4.3.5",
