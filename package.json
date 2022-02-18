@@ -36,7 +36,7 @@
           "label": "Blame",
           "description": "${(config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || (config.git.blame.decorations === 'file' && 'Hide Git blame line annotations') || 'Show Git blame line annotations on selected lines'}",
           "pressed": "(config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file')",
-          "iconURL": "${(config.git.blame.decorations === 'line' && 'https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/011803406ef6e443c3b8d96c6f1a8cd5cd16fe45/icon/git_logo.svg?sanitize=true') || (config.git.blame.decorations === 'file' && 'https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/011803406ef6e443c3b8d96c6f1a8cd5cd16fe45/icon/git_logo-2.svg?sanitize=true') || 'https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/011803406ef6e443c3b8d96c6f1a8cd5cd16fe45/icon/git_logo-3.svg?sanitize=true'"
+          "iconURL": "${(config.git.blame.decorations === 'line' && 'https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/6219f35aa158923733474853b6162bef2f1b7fff/icon/git_logo.svg?sanitize=true') || (config.git.blame.decorations === 'file' && 'https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/6219f35aa158923733474853b6162bef2f1b7fff/icon/git_logo-2.svg?sanitize=true') || 'https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/6219f35aa158923733474853b6162bef2f1b7fff/icon/git_logo-3.svg?sanitize=true'"
         }
       }
     ],
