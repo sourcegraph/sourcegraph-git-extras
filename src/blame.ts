@@ -95,11 +95,9 @@ export const getDecorationFromHunk = (
         after: {
             light: {
                 color: 'rgba(0, 0, 25, 0.55)',
-                backgroundColor: 'rgba(193, 217, 255, 0.65)',
             },
             dark: {
                 color: 'rgba(235, 235, 255, 0.55)',
-                backgroundColor: 'rgba(15, 43, 89, 0.65)',
             },
             contentText: `${username}${displayName}, ${dateString}: • ${truncate(hunk.message, 45)}`,
             hoverMessage,
