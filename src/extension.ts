@@ -4,7 +4,7 @@ import * as sourcegraph from 'sourcegraph'
 import { getBlameDecorations, getBlameStatusBarItem, queryBlameHunks } from './blame'
 
 export interface Settings {
-    ['git.blame.decorations']?: 'none' | 'line' | 'file'
+    ['git.blame.decorations']?: 'none' | 'file'
     // The following two settings are deprecated, but we will still look for them
     // to 'onboard' users to new setting
     ['git.blame.lineDecorations']?: boolean

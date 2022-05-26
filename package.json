@@ -27,15 +27,15 @@
           [
             "git.blame.decorations"
           ],
-          "${(config.git.blame.decorations === 'line' && 'file') || (config.git.blame.decorations === 'file' && 'none') || 'line'}",
+          "${((config.git.blame.decorations === 'file' && 'none') || 'file')}",
           null
         ],
         "category": "Git",
-        "title": "${(config.git.blame.decorations === 'line' && 'Show blame for the whole file') || (config.git.blame.decorations === 'file' && 'Hide blame') || 'Show blame for selected lines'}",
+        "title": "${((config.git.blame.decorations === 'none' && 'Show blame for the whole file') || 'Hide blame')}",
         "actionItem": {
           "label": "Blame",
-          "description": "${(config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || (config.git.blame.decorations === 'file' && 'Hide Git blame line annotations') || 'Show Git blame line annotations on selected lines'}",
-          "pressed": "(config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file')",
+          "description": "${((config.git.blame.decorations === 'file' && 'Hide Git blame line annotations') || 'Show Git blame line annotations for the whole file')}",
+          "pressed": "(config.git.blame.decorations === 'file')",
           "iconURL": "https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/63dd95962c43b95b3f3a9ea2aa0165d6b38a958c/icon/git_logo.svg?sanitize=true"
         }
       }
@@ -58,9 +58,9 @@
       "title": "Git extras",
       "properties": {
         "git.blame.decorations": {
-          "description": "Whether to decorate all lines in a file, only selected lines, or none at all.",
+          "description": "Whether to decorate all lines in a file, or none at all.",
           "type": "string",
-          "enum": ["none", "line", "file"],
+          "enum": ["none", "file"],
           "default": "none"
         },
         "git.blame.showPreciseDate": {
