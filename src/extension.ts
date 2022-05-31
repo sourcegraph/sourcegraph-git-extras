@@ -66,16 +66,7 @@ export function activate(context: sourcegraph.ExtensionContext): void {
                 )
             }
 
-            editor.setDecorations(
-                decorationType,
-                getBlameDecorations({
-                    hunks,
-                    now,
-                    settings,
-                    selections,
-                    sourcegraph,
-                })
-            )
+            editor.setDecorations(decorationType, getBlameDecorations({ hunks, now, settings, sourcegraph }))
         } catch (err) {
             console.error('Decoration/status bar error:', err)
         }

@@ -95,27 +95,18 @@ export const getDecorationFromHunk = (
         after: {
             light: {
                 color: 'rgba(0, 0, 25, 0.55)',
+                backgroundColor: 'rgba(193, 217, 255, 0.65)',
             },
             dark: {
                 color: 'rgba(235, 235, 255, 0.55)',
+                backgroundColor: 'rgba(15, 43, 89, 0.65)',
             },
-            contentText: `${dateString} ${username}${displayName} [${truncate(hunk.message, 45)}]`,
+            contentText: `${dateString} • ${username}${displayName} [${truncate(hunk.message, 45)}]`,
             hoverMessage,
             linkURL,
         },
     }
 }
-
-export const getBlameDecorationsForSelections = (
-    hunks: Hunk[],
-    selections: Selection[],
-    now: number,
-    settings: Pick<Settings, 'git.blame.showPreciseDate'>,
-    sourcegraph: typeof import('sourcegraph')
-) =>
-    getHunksForSelections(hunks, selections).map(({ hunk, selectionStartLine }) =>
-        getDecorationFromHunk(hunk, now, selectionStartLine, settings, sourcegraph)
-    )
 
 export const getAllBlameDecorations = (
     hunks: Hunk[],
@@ -177,28 +168,16 @@ export const queryBlameHunks = memoizeAsync(
  */
 export const getBlameDecorations = ({
     settings,
-    selections,
     now,
     hunks,
     sourcegraph,
 }: {
     settings: Settings
-    selections: Selection[] | null
     now: number
     hunks: Hunk[]
     sourcegraph: typeof import('sourcegraph')
-}): TextDocumentDecoration[] => {
-    const decorations = settings['git.blame.decorations'] || 'none'
-
-    if (decorations === 'none') {
-        return []
-    }
-    if (selections !== null && decorations === 'line') {
-        return getBlameDecorationsForSelections(hunks, selections, now, settings, sourcegraph)
-    } else {
-        return getAllBlameDecorations(hunks, now, settings, sourcegraph)
-    }
-}
+}): TextDocumentDecoration[] =>
+    settings['git.blame.decorations'] === 'file' ? getAllBlameDecorations(hunks, now, settings, sourcegraph) : []
 
 export const getBlameStatusBarItem = ({
     selections,
