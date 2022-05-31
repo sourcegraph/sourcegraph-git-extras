@@ -10,7 +10,15 @@ export interface Settings {
     ['git.blame.lineDecorations']?: boolean
     ['git.blame.decorateWholeFile']?: boolean
     ['git.blame.showPreciseDate']?: boolean
+
+    experimentalFeatures?: {
+        showGitBlameInSeparateColumn?: boolean
+    }
 }
+
+const isBlameForSelectedLinesEnabled = () =>
+    !sourcegraph.configuration.get<Settings>().get('experimentalFeatures')?.showGitBlameInSeparateColumn ||
+    sourcegraph.internal.clientApplication !== 'sourcegraph'
 
 const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
 
@@ -32,7 +40,7 @@ export function activate(context: sourcegraph.ExtensionContext): void {
         // When the configuration or current file changes, publish new decorations.
         context.subscriptions.add(
             combineLatest(configurationChanges, selectionChanges).subscribe(([, { editor, selections }]) =>
-                decorate(editor, selections)
+                decorate(editor, isBlameForSelectedLinesEnabled() ? selections : null)
             )
         )
     } else {
