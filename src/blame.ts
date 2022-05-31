@@ -108,6 +108,17 @@ export const getDecorationFromHunk = (
     }
 }
 
+export const getBlameDecorationsForSelections = (
+    hunks: Hunk[],
+    selections: Selection[],
+    now: number,
+    settings: Pick<Settings, 'git.blame.showPreciseDate'>,
+    sourcegraph: typeof import('sourcegraph')
+) =>
+    getHunksForSelections(hunks, selections).map(({ hunk, selectionStartLine }) =>
+        getDecorationFromHunk(hunk, now, selectionStartLine, settings, sourcegraph)
+    )
+
 export const getAllBlameDecorations = (
     hunks: Hunk[],
     now: number,
@@ -168,16 +179,28 @@ export const queryBlameHunks = memoizeAsync(
  */
 export const getBlameDecorations = ({
     settings,
+    selections,
     now,
     hunks,
     sourcegraph,
 }: {
     settings: Settings
+    selections: Selection[] | null
     now: number
     hunks: Hunk[]
     sourcegraph: typeof import('sourcegraph')
-}): TextDocumentDecoration[] =>
-    settings['git.blame.decorations'] === 'file' ? getAllBlameDecorations(hunks, now, settings, sourcegraph) : []
+}): TextDocumentDecoration[] => {
+    const decorations = settings['git.blame.decorations'] || 'none'
+
+    if (decorations === 'none') {
+        return []
+    }
+    if (selections !== null && decorations === 'line') {
+        return getBlameDecorationsForSelections(hunks, selections, now, settings, sourcegraph)
+    } else {
+        return getAllBlameDecorations(hunks, now, settings, sourcegraph)
+    }
+}
 
 export const getBlameStatusBarItem = ({
     selections,
