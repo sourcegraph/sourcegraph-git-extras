@@ -93,7 +93,7 @@ describe('getDecorationsFromHunk()', () => {
             getDecorationFromHunk(FIXTURE_HUNK_1, NOW, 0, { 'git.blame.showPreciseDate': false }, SOURCEGRAPH as any)
         ).toEqual({
             after: {
-                contentText: 'a, 3 months ago: • c',
+                contentText: '3 months ago • a [c]',
                 dark: {
                     backgroundColor: 'rgba(15, 43, 89, 0.65)',
                     color: 'rgba(235, 235, 255, 0.55)',
@@ -125,7 +125,7 @@ describe('getDecorationsFromHunk()', () => {
             SOURCEGRAPH as any
         )
         expect(decoration.after && decoration.after.contentText).toEqual(
-            'a, 3 months ago: • asdgjdsag asdklgbasdghladg asdgjlhbasdgjlhabs…'
+            '3 months ago • a [asdgjdsag asdklgbasdghladg asdgjlhbasdgjlhabs…]'
         )
     })
 
@@ -148,7 +148,7 @@ describe('getDecorationsFromHunk()', () => {
             SOURCEGRAPH as any
         )
         expect(decoration.after && decoration.after.contentText).toEqual(
-            'asdgjdsag asdklgbasdghlad…, 3 months ago: • c'
+            '3 months ago • asdgjdsag asdklgbasdghlad… [c]'
         )
     })
 })
@@ -322,7 +322,7 @@ describe('getBlameDecorations()', () => {
                 3,
                 { 'git.blame.showPreciseDate': false },
                 SOURCEGRAPH as any
-            ).after!.contentText!.startsWith(
+            ).after!.contentText!.includes(
                 `(${FIXTURE_HUNK_4.author.person.user!.username}) ${FIXTURE_HUNK_4.author.person.displayName}`
             )
         ).toBe(true)
@@ -333,7 +333,7 @@ describe('getBlameDecorations()', () => {
                 2,
                 { 'git.blame.showPreciseDate': false },
                 SOURCEGRAPH as any
-            ).after!.contentText!.startsWith(`${FIXTURE_HUNK_3.author.person.displayName}`)
+            ).after!.contentText!.includes(`${FIXTURE_HUNK_3.author.person.displayName}`)
         ).toBe(true)
     })
 })
