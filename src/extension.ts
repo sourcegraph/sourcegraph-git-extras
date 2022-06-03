@@ -12,15 +12,16 @@ export interface Settings {
     ['git.blame.showPreciseDate']?: boolean
 
     experimentalFeatures?: {
-        showGitBlameInSeparateColumn?: boolean
+        enableExtensionsDecorationsColumnView?: boolean
     }
 }
 
 const isBlameForSelectedLinesEnabled = () =>
-    !sourcegraph.configuration.get<Settings>().get('experimentalFeatures')?.showGitBlameInSeparateColumn ||
+    !sourcegraph.configuration.get<Settings>().get('experimentalFeatures')?.enableExtensionsDecorationsColumnView ||
     sourcegraph.internal.clientApplication !== 'sourcegraph'
 
-const decorationType = sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType()
+const decorationType =
+    sourcegraph.app.createDecorationType && sourcegraph.app.createDecorationType({ display: 'column' })
 
 const statusBarItemType = sourcegraph.app.createStatusBarItemType && sourcegraph.app.createStatusBarItemType()
 
