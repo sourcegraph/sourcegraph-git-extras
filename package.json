@@ -27,15 +27,15 @@
           [
             "git.blame.decorations"
           ],
-          "${(config.git.blame.decorations === 'line' && 'file') || (config.git.blame.decorations === 'file' && 'none') || 'line'}",
+          "${(config.git.blame.decorations === 'line' && 'file') || (config.git.blame.decorations === 'file' && 'none') || (clientApplication.isSourcegraph && experimentalFeatures.enableExtensionsDecorationsColumnView && 'file' || 'line')}",
           null
         ],
         "category": "Git",
-        "title": "${(config.git.blame.decorations === 'line' && 'Show blame for the whole file') || (config.git.blame.decorations === 'file' && 'Hide blame') || 'Show blame for selected lines'}",
+        "title": "${(config.git.blame.decorations === 'line' && 'Show blame for the whole file') || (config.git.blame.decorations === 'file' && 'Hide blame') || (clientApplication.isSourcegraph && experimentalFeatures.enableExtensionsDecorationsColumnView && 'Show blame for the whole file' || 'Show blame for selected lines')}",
         "actionItem": {
           "label": "Blame",
-          "description": "${(config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || (config.git.blame.decorations === 'file' && 'Hide Git blame line annotations') || 'Show Git blame line annotations on selected lines'}",
-          "pressed": "(config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file')",
+          "description": "${(config.git.blame.decorations === 'line' && 'Show Git blame line annotations for the whole file') || (config.git.blame.decorations === 'file' && 'Hide Git blame line annotations') || (clientApplication.isSourcegraph && experimentalFeatures.enableExtensionsDecorationsColumnView && 'Show Git blame line annotations for the whole file' || 'Show Git blame line annotations on selected lines')}",
+          "pressed": "((!clientApplication.isSourcegraph || !experimentalFeatures.enableExtensionsDecorationsColumnView) && config.git.blame.decorations === 'line') || (config.git.blame.decorations === 'file')",
           "iconURL": "https://raw.githubusercontent.com/sourcegraph/sourcegraph-git-extras/63dd95962c43b95b3f3a9ea2aa0165d6b38a958c/icon/git_logo.svg?sanitize=true"
         }
       }
@@ -129,6 +129,7 @@
     "@types/node": "16.11.33",
     "@types/sinon": "10.0.11",
     "expect": "^24.1.0",
+    "graphql": "^15.4.0",
     "husky": "^4.3.5",
     "lnfs-cli": "^2.1.0",
     "lodash": "^4.17.20",
@@ -139,7 +140,7 @@
     "prettier": "^1.19.1",
     "sinon": "^9.2.1",
     "source-map-support": "^0.5.12",
-    "sourcegraph": "^25.3.0",
+    "sourcegraph": "^25.6.0",
     "ts-node": "^8.10.2",
     "tslint": "^5.11.0",
     "typescript": "^4.1.2",

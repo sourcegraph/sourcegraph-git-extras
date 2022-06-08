@@ -3259,6 +3259,11 @@ grapheme-breaker@^0.3.2:
     brfs "^1.2.0"
     unicode-trie "^0.3.1"
 
+graphql@^15.4.0:
+  version "15.8.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.8.0.tgz#33410e96b012fa3bdb1091cc99a94769db212b38"
+  integrity sha512-5gghUc24tP9HRznNpV2+FIoq3xKkj5dTQqf4v0CpdPbFVwFkWoxOM+o+2OC9ZSvjEMTjfmG9QT+gcvggTwW1zw==
+
 growl@1.10.5:
   version "1.10.5"
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.10.5.tgz#f2735dc2283674fa67478b10181059355c369e5e"
@@ -6583,10 +6588,10 @@ source-map@^0.5.0, source-map@^0.5.3, source-map@^0.5.6:
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
 
-sourcegraph@^25.3.0:
-  version "25.3.0"
-  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-25.3.0.tgz#0ad58f40a6fb286ddaf5f441c28b2c1241098e94"
-  integrity sha512-677uVs3rq1gVeiKTZ6wrlq862dUIn02ZmEgxoPTfFMI3tlJWhdgFZOg2GpFEgFRoB1ct7rMMlRrI1cEQdB7Rkg==
+sourcegraph@^25.6.0:
+  version "25.6.0"
+  resolved "https://registry.yarnpkg.com/sourcegraph/-/sourcegraph-25.6.0.tgz#fc23822a8e207e25ff9bfc217dad4a14bfbd1e84"
+  integrity sha512-BKe/hugALfgMyM38ecWpeFLtXvVklq++aUpGlm4Y3fY8/ufbUE/FAaYchF9qkidli8Usef5xnDRCKbAfsPRpWA==
 
 spawn-wrap@^1.4.2:
   version "1.4.2"
