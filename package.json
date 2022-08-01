@@ -126,7 +126,7 @@
     "@types/expect": "1.20.4",
     "@types/lodash": "4.14.182",
     "@types/mocha": "9.1.1",
-    "@types/node": "16.11.43",
+    "@types/node": "16.11.47",
     "@types/sinon": "10.0.12",
     "expect": "^24.1.0",
     "graphql": "^15.4.0",
