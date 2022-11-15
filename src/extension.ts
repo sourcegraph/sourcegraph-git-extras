@@ -53,8 +53,11 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     // brief flicker of the old state when the file is reopened.
     async function decorate(editor: sourcegraph.CodeEditor, selections: sourcegraph.Selection[] | null): Promise<void> {
         const settings = sourcegraph.configuration.get<Settings>().value
+        const decorations = settings['git.blame.decorations'] || 'none'
+        const shouldQueryBlameHunks = decorations === 'file' || (decorations === 'line' && selections?.length)
+
         try {
-            const hunks = await queryBlameHunks({ uri: editor.document.uri, sourcegraph })
+            const hunks = shouldQueryBlameHunks ? await queryBlameHunks({ uri: editor.document.uri, sourcegraph }) : []
             const now = Date.now()
 
             // Check if the extension host supports status bar items (Introduced in Sourcegraph version 3.26.0).
