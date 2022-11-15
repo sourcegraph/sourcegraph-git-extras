@@ -54,10 +54,16 @@ export function activate(context: sourcegraph.ExtensionContext): void {
     async function decorate(editor: sourcegraph.CodeEditor, selections: sourcegraph.Selection[] | null): Promise<void> {
         const settings = sourcegraph.configuration.get<Settings>().value
         const decorations = settings['git.blame.decorations'] || 'none'
-        const shouldQueryBlameHunks = decorations === 'file' || (decorations === 'line' && selections?.length)
+        const shouldQueryBlameHunks = Boolean(decorations === 'file' || (decorations === 'line' && selections?.length))
 
         try {
-            const hunks = shouldQueryBlameHunks ? await queryBlameHunks({ uri: editor.document.uri, sourcegraph }) : []
+            const hunks = shouldQueryBlameHunks
+                ? await queryBlameHunks({
+                      uri: editor.document.uri,
+                      sourcegraph,
+                      selections: decorations === 'line' ? selections : null,
+                  })
+                : []
             const now = Date.now()
 
             // Check if the extension host supports status bar items (Introduced in Sourcegraph version 3.26.0).

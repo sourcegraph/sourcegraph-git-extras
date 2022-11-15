@@ -127,16 +127,24 @@ export const getAllBlameDecorations = (
 ) => hunks.map(hunk => getDecorationFromHunk(hunk, now, hunk.startLine - 1, settings, sourcegraph))
 
 export const queryBlameHunks = memoizeAsync(
-    async ({ uri, sourcegraph }: { uri: string; sourcegraph: typeof import('sourcegraph') }): Promise<Hunk[]> => {
+    async ({
+        uri,
+        sourcegraph,
+        selections,
+    }: {
+        uri: string
+        sourcegraph: typeof import('sourcegraph')
+        selections: Selection[] | null
+    }): Promise<Hunk[]> => {
         const { repo, rev, path } = resolveURI(uri)
         const { data, errors } = await sourcegraph.commands.executeCommand(
             'queryGraphQL',
             gql`
-                query GitBlame($repo: String!, $rev: String!, $path: String!) {
+                query GitBlame($repo: String!, $rev: String!, $path: String!, $startLine: Int!, $endLine: Int!) {
                     repository(name: $repo) {
                         commit(rev: $rev) {
                             blob(path: $path) {
-                                blame(startLine: 0, endLine: 0) {
+                                blame(startLine: $startLine, endLine: $endLine) {
                                     startLine
                                     endLine
                                     author {
@@ -160,7 +168,13 @@ export const queryBlameHunks = memoizeAsync(
                     }
                 }
             `,
-            { repo, rev, path }
+            {
+                repo,
+                rev,
+                path,
+                startLine: selections ? selections[0].start.line + 1 : 0,
+                endLine: selections ? selections[0].end.line + 1 : 0,
+            }
         )
         if (errors && errors.length > 0) {
             throw new Error(errors.join('\n'))
@@ -170,7 +184,12 @@ export const queryBlameHunks = memoizeAsync(
         }
         return data.repository.commit.blob.blame
     },
-    ({ uri }) => uri
+    ({ uri, selections }) => {
+        if (selections) {
+            return [uri, selections[0].start.line, selections[0].end.line].join(':')
+        }
+        return uri
+    }
 )
 
 /**
