@@ -130,7 +130,7 @@
     "@types/expect": "1.20.4",
     "@types/lodash": "4.17.13",
     "@types/mocha": "9.1.1",
-    "@types/node": "20.16.11",
+    "@types/node": "20.17.5",
     "@types/sinon": "17.0.3",
     "expect": "^24.1.0",
     "graphql": "^15.4.0",
