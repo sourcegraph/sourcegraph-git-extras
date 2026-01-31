@@ -131,7 +131,7 @@
     "@types/lodash": "4.17.13",
     "@types/mocha": "9.1.1",
     "@types/node": "22.10.1",
-    "@types/sinon": "17.0.3",
+    "@types/sinon": "17.0.4",
     "expect": "^24.1.0",
     "graphql": "^15.4.0",
     "husky": "^4.3.5",
