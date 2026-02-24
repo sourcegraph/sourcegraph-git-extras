@@ -133,7 +133,7 @@
     "@types/node": "22.10.1",
     "@types/sinon": "17.0.3",
     "expect": "^24.1.0",
-    "graphql": "^15.4.0",
+    "graphql": "^16.13.0",
     "husky": "^4.3.5",
     "lnfs-cli": "^2.1.0",
     "lodash": "^4.17.20",
